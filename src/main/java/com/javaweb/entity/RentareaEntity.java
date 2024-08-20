@@ -1,0 +1,44 @@
+package com.javaweb.entity;
+
+
+import javax.persistence.*;
+
+@Entity
+@Table( name = "rentarea")
+public class RentareaEntity {
+
+    @Id
+    @GeneratedValue( strategy = GenerationType.IDENTITY)
+    private  Long id;
+
+    @Column(name = "value")
+    private  Long value;
+
+    @ManyToOne
+    @JoinColumn(name = "buildingid")
+    private BuildingEntity buildingId;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getValue() {
+        return value;
+    }
+
+    public void setValue(Long value) {
+        this.value = value;
+    }
+
+    public BuildingEntity getBuildingId() {
+        return buildingId;
+    }
+
+    public void setBuildingId(BuildingEntity buildingId) {
+        this.buildingId = buildingId;
+    }
+}
