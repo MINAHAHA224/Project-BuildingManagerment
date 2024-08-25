@@ -1,8 +1,12 @@
 package com.javaweb.repository.custom.impl;
 
 import com.javaweb.builder.BuildingSearchBuilder;
+import com.javaweb.constant.SystemConstant;
 import com.javaweb.entity.BuildingEntity;
 import com.javaweb.repository.custom.BuildingRepositoryCustom;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -96,21 +100,34 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
         }
     }
     @Override
-    public List<BuildingEntity> findAll(BuildingSearchBuilder buildingSearchBuilder ) {
+    public Page<BuildingEntity> findAll(BuildingSearchBuilder buildingSearchBuilder , Pageable pageable) {
 
 
         StringBuilder sql = new StringBuilder("SELECT  building.id , building.name , building.street , building.ward , building.district , building.numberofbasement , building.floorarea , building.direction , building.level , building.rentprice , building.rentpricedescription ,building.servicefee , building.brokeragefee , building.type , building.managername,building.managerphone\r\n"
                 + "FROM building");
         joinTable(buildingSearchBuilder ,sql);
-        sql.append(" WHERE 1=1 ");
+        sql.append(SystemConstant.ONE_EQUAL_ONE);
         queryNormal(buildingSearchBuilder ,sql);
         querySpecial(buildingSearchBuilder ,sql );
-        sql.append(" GROUP BY building.id ;");
+        sql.append(" GROUP BY building.id ");
 
+        // Pagination query
         String querySql = sql.toString();
         Query query = entityManager.createNativeQuery( querySql , BuildingEntity.class);
+
+        // Đếm số bản ghi ( row )
+        List<Object> rows = query.getResultList();
+        long i = 0;
+        for ( Object row : rows ){
+            i+=1;
+        }
+        long totalResults = i;
+
+        // setup pagination cho List<BuildingEntity>
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
         List<BuildingEntity> answer = query.getResultList();
 
-        return answer;
+        return new PageImpl<>(answer, pageable, totalResults);
     }
 }

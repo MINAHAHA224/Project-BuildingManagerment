@@ -29,8 +29,11 @@ public class UserEntity extends BaseEntity {
     @Column(name = "email", unique = true)
     private String email;
 
-    @OneToMany(mappedBy="userEntity", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="userEntity",  cascade = {CascadeType.MERGE,CascadeType.PERSIST} ,orphanRemoval = true)
     private List<AssignmentBuildingEntity> assignmentBuildingEntities = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userEntity" , cascade = {CascadeType.MERGE,CascadeType.PERSIST} ,orphanRemoval = true)
+    private  List<AssignmentCustomerEntity> assignmentCustomerEntities = new ArrayList<>();
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", nullable = false),
@@ -38,7 +41,13 @@ public class UserEntity extends BaseEntity {
     private List<RoleEntity> roles = new ArrayList<>();
 
 
+    public List<AssignmentCustomerEntity> getAssignmentCustomerEntities() {
+        return assignmentCustomerEntities;
+    }
 
+    public void setAssignmentCustomerEntities(List<AssignmentCustomerEntity> assignmentCustomerEntities) {
+        this.assignmentCustomerEntities = assignmentCustomerEntities;
+    }
 
 
 //    @OneToMany(mappedBy="users", fetch = FetchType.LAZY)

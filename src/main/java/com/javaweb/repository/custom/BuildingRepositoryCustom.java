@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface BuildingRepositoryCustom {
 
-    List<BuildingEntity> findAll (BuildingSearchBuilder buildingSearchBuilder );
+    Page<BuildingEntity> findAll (BuildingSearchBuilder buildingSearchBuilder , Pageable pageable );
 }

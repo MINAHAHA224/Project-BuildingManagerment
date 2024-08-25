@@ -59,11 +59,11 @@ public class BuildingEntity {
     private String managerPhone;
 
 
-    @OneToMany(mappedBy = "buildingId")
+    @OneToMany(mappedBy = "buildingId" , cascade = {CascadeType.MERGE , CascadeType.PERSIST ,CascadeType.REMOVE} )
     private List<RentareaEntity> rentValue;
 
 
-    @OneToMany(mappedBy = "buildingEntity")
+    @OneToMany(mappedBy = "buildingEntity" , cascade = {CascadeType.MERGE , CascadeType.PERSIST,CascadeType.REMOVE} )
     private List<AssignmentBuildingEntity> assignmentBuildingEntities;
 
     public Long getId() {

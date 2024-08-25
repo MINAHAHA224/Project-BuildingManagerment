@@ -1,5 +1,7 @@
 package com.javaweb.model.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,8 @@ public class BuildingDTO extends AbstractDTO{
     private String image;
     private String imageBase64;
     private String imageName;
+
+
 
     private Map<String,String> buildingDTOs = new HashMap<>();
 

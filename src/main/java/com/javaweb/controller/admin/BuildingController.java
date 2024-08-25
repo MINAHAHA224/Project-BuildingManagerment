@@ -9,13 +9,18 @@ import com.javaweb.entity.BuildingEntity;
 import com.javaweb.enums.BuildingType;
 import com.javaweb.enums.DistrictCode;
 import com.javaweb.model.dto.BuildingDTO;
+import com.javaweb.model.dto.MyUserDetail;
 import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.model.response.BuildingSearchResponse;
+import com.javaweb.security.utils.SecurityUtils;
 import com.javaweb.service.BuildingService;
 import com.javaweb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,8 +46,8 @@ public class BuildingController {
     private BuildingConverter buildingConverter;
 
     @RequestMapping(value = "/admin/building-list" , method = RequestMethod.GET)
-    public ModelAndView getBuildingListPage(@ModelAttribute BuildingSearchRequest buildingSearchRequest , HttpServletRequest request
-                                            ){
+    public ModelAndView getBuildingListPage(@ModelAttribute BuildingSearchRequest buildingSearchRequest , HttpServletRequest request,
+           @RequestParam("page") Optional<String> pageOptional ){
         ModelAndView mav = new ModelAndView("admin/building/list");
         mav.addObject("buildingDTOSearch" ,buildingSearchRequest);
 
@@ -54,11 +59,46 @@ public class BuildingController {
         mav.addObject("staffs" , staffs);
         mav.addObject("rentCode" ,rentCode );
 
+        int page = 1;
+        try {
+            if (pageOptional.isPresent()) {
+                page = Integer.parseInt(pageOptional.get());
+            } else {
+                page = 1;
+            }
+        } catch (Exception e) {
+            page = 1;
+            // TODO: handle exception
+        }
+        Pageable pageable = PageRequest.of(page - 1 , 2 );
+        //check role
 
-        BuildingSearchBuilder buildingSearchBuilder = this.buildingSearchBuilderConverter.toBuildingSearchBuilder(buildingSearchRequest);
-        List<BuildingSearchResponse> buildingSearchResponses = this.buildingService.getBuildingSearch(buildingSearchBuilder );
 
-        mav.addObject("buildingLists" , buildingSearchResponses );
+        if (SecurityUtils.getAuthorities().contains("ROLE_STAFF")){
+            Long id = SecurityUtils.getPrincipal().getId();
+            buildingSearchRequest.setStaffId(id);
+            BuildingSearchBuilder buildingSearchBuilder = this.buildingSearchBuilderConverter.toBuildingSearchBuilder(buildingSearchRequest);
+            Page<BuildingSearchResponse> buildingSearchResponses = this.buildingService.getBuildingSearch(buildingSearchBuilder  , pageable);
+            mav.addObject("buildingLists" , buildingSearchResponses.getContent() );
+            mav.addObject("totalPages" , buildingSearchResponses.getTotalPages());
+            mav.addObject("currentPage" ,page );
+        }
+        else {
+            BuildingSearchBuilder buildingSearchBuilder = this.buildingSearchBuilderConverter.toBuildingSearchBuilder(buildingSearchRequest);
+            Page<BuildingSearchResponse> buildingSearchResponses = this.buildingService.getBuildingSearch(buildingSearchBuilder  , pageable);
+            mav.addObject("buildingLists" , buildingSearchResponses.getContent() );
+            mav.addObject("totalPages" , buildingSearchResponses.getTotalPages());
+            mav.addObject("currentPage" ,page );
+        }
+
+        // custom lai staffid của manager và sttaff
+
+
+
+
+        mav.addObject("currentPage" , page );
+
+
 
         return mav;
     }

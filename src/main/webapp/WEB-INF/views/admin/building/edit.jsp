@@ -322,6 +322,7 @@
 
                         </div>
 
+
                         <div class="col-xs-12">
                             <div class=" row">
                                 <div class="col-sm-9 pull-right">
@@ -336,13 +337,10 @@
                                         </c:when>
 
                                     </c:choose>
-
-
-
                                 </div>
                             </div>
-
                         </div>
+
                        <form:input type="hidden" path="id" />
 
                     </form>
@@ -405,10 +403,11 @@
     })
 
     function btnUpdate(){
+
         var data = {}
         var typeCode = []
-        var formData = $('#form-edit').serializeArray();
-        $.each(formData, function (i, v) {
+        var formFields  = $('#form-edit').serializeArray();
+        $.each(formFields , function (i, v) {
             if (v.name !== 'typeCode') {
                 data["" + v.name + ""] = v.value;
             } else {
@@ -417,6 +416,7 @@
 
         });
         data['typeCode'] = typeCode;
+
 
         $.ajax({
             type: "POST",
@@ -432,6 +432,9 @@
             }
         });
     }
+
+
+
 </script>
 </body>
 </html>

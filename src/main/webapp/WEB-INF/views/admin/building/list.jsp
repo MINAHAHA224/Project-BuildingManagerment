@@ -182,19 +182,22 @@
 
                                                 <form:input type="text" id="managerPhone" path="managerPhone" class=" form-control" />
                                             </div>
+
                                             <div class="col-xs-2">
-                                                <label class="name">
-                                                    Chọn nhân viên phụ trách
-                                                </label>
+                                                <security:authorize access="hasRole('MANAGER')" >
+                                                    <label class="name">
+                                                        Chọn nhân viên phụ trách
+                                                    </label>
 
-                                                <form:select class="form-control" id="staffId" path="staffId"
-                                                        placeholder="--Chọn nhân viên-- ">
-                                                    <form:option value="">--Chọn nhân viên-- </form:option>
-                                                    <form:options items="${staffs}"/>
+                                                    <form:select class="form-control" id="staffId" path="staffId"
+                                                                 placeholder="--Chọn nhân viên-- ">
+                                                        <form:option value="">--Chọn nhân viên-- </form:option>
+                                                        <form:options items="${staffs}"/>
 
 
 
-                                                </form:select>
+                                                    </form:select>
+                                                </security:authorize>
                                             </div>
 
                                         </div>
@@ -266,6 +269,7 @@
                         </div>
 
 
+
                 </div>
             </div>
             <!--/widget-->
@@ -333,24 +337,28 @@
                                 <td>${buildingList.brokerageFee}</td>
 
                                 <td>
+
                                     <div class="hidden-sm hidden-xs btn-group">
+                                        <security:authorize access="hasRole('MANAGER')">
                                         <button onclick="assignmentBuilding(${buildingList.id})" title="Giao tòa nhà"
                                                 class="btn btn-xs btn-success">
 
                                             <i class="ace-icon glyphicon glyphicon-list"></i>
 
                                         </button>
-
+                                        </security:authorize>
                                         <a href="/admin/building-edit-${buildingList.id}"   title="Sửa tòa nhà" class="btn btn-xs btn-info">
                                             <i class="ace-icon fa fa-pencil bigger-120"></i>
                                         </a>
-
+                                        <security:authorize access="hasRole('MANAGER')">
                                         <button title="Xóa tòa nhà" onclick="btnDeleteOnly(${buildingList.id})" class="btn btn-xs btn-danger">
                                             <i class="ace-icon fa fa-trash-o bigger-120"></i>
                                         </button>
+                                        </security:authorize>
 
 
                                     </div>
+
 
                                     <div class="hidden-md hidden-lg">
                                         <div class="inline pos-rel">
@@ -407,25 +415,38 @@
 
                 </div><!-- /.span -->
                 <div class="col-xs-12">
-                    <nav class="center" aria-label="Page navigation example">
-                        <ul class="pagination">
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                    <span class="sr-only">Previous</span>
-                                </a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                    <span class="sr-only">Next</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
+                    <c:if test="${totalPages == 0}">
+                        <h4 class="center">không có dữ liệu</h4>
+                    </c:if>
+                    <c:if test="${totalPages != 0}">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item">
+                                    <a class="${ currentPage eq 1 ? 'disabled page-link ' : 'page-link'}"
+                                       href="/admin/customer-list?page=${currentPage - 1}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <c:forEach begin="0" end="${totalPages - 1}" varStatus="loop">
+                                    <li class="page-item">
+                                        <a class="${ currentPage eq (loop.index +1) ? 'active page-link ' : 'page-link'}"
+                                           href="/admin/customer-list?page=${loop.index +1}">${loop.index +1}
+                                        </a>
+                                    </li>
+
+                                </c:forEach>
+
+                                <li class="page-item">
+                                    <a class="${ currentPage eq totalPages ? 'disabled page-link ' : 'page-link'}"
+                                       href="/admin/customer-list?page=${currentPage + 1}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </c:if>
+
                 </div>
 
             </div>
@@ -478,7 +499,7 @@
                 <input type="hidden" id="buildingId" name="buildingId" value="" />
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" id="loadStaff">Giao tòa
+                <button type="button" class="btn btn-default" onclick="loadStaff()">Giao tòa
                     nhà</button>
                 <button type="button" class="btn btn-default" id="btnCancel">Đóng</button>
             </div>
@@ -527,12 +548,12 @@
             $('#assignmentBuildingModel').modal();
         }
 
-        $('#loadStaff').click(function (e) {
-            e.preventDefault();
+       function loadStaff (e) {
+
             var data = {};
             data['buildingId'] = $('#buildingId').val();
-            var staffs = $('#staffList').find('tbody input[type=checkbox]:checked').map(function () {
-                return $(this).val();
+            var staffs = $('#staffList').find('tbody input[type=checkbox]:checked').map(function (index,item) {
+                return item.value;
             }).get();
             data['staffs'] = staffs;
             $.ajax({
@@ -551,17 +572,18 @@
 
             window.location.href ="/admin/building-list";
 
-        });
+       }
 
         function btnDeleteOnly( idBuilding ){
             jsonDelete(idBuilding)
+            window.location.href ="/admin/building-list";
         }
 
         function btnDeleteAll() {
 
-
-            var idBuilding = $('#simple-table').find('tbody input[type=checkbox]:checked').map(function () {
-                return $(this).val();
+            window.location.href ="/admin/building-list";
+            var idBuilding = $('#simple-table').find('tbody input[type=checkbox]:checked').map(function (index,item) {
+                return item.value;
             }).get();
 
 

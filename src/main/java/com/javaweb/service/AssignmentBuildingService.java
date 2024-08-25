@@ -10,7 +10,7 @@ import java.util.List;
 public interface AssignmentBuildingService {
 
     List<AssignmentBuildingEntity> getAssignmentBuildingEntity (BuildingEntity buildingEntity);
-    List<AssignmentBuildingEntity> getAll ( );
+    List<AssignmentBuildingEntity> getAll ();
 
     AssignmentBuildingEntity save( AssignmentBuildingEntity assignmentBuildingEntity);
     @Transactional

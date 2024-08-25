@@ -1,5 +1,6 @@
 package com.javaweb.repository.custom.impl;
 
+import com.javaweb.constant.SystemConstant;
 import com.javaweb.entity.AssignmentBuildingEntity;
 import com.javaweb.entity.BuildingEntity;
 import com.javaweb.entity.UserEntity;
@@ -34,7 +35,7 @@ public class AssignmentBuildingRepositoryImpl implements AssignmentBuildingRepos
         Long id = buildingEntity.getId();
         StringBuilder sql = new StringBuilder(" SELECT assignmentbuilding.id , assignmentbuilding.staffid , assignmentbuilding.buildingid  FROM assignmentbuilding ");
         joinTable(sql , id);
-        sql.append(" WHERE 1=1 " );
+        sql.append(SystemConstant.ONE_EQUAL_ONE);
         querySpecial ( sql , id);
 
         Query query = entityManager.createNativeQuery(sql.toString() );

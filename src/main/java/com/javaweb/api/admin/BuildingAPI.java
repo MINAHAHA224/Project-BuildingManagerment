@@ -69,11 +69,11 @@ public class BuildingAPI {
     }
 
     @PostMapping("/api/building/assignmentBuilding")
-    public List<AssignmentBuildingEntity> getAssignmentBuilding (@RequestBody AssignmentBuildingDTO assignmentBuildingDTO){
+    public void getAssignmentBuilding (@RequestBody AssignmentBuildingDTO assignmentBuildingDTO){
 
         BuildingEntity buildingEntity = this.buildingService.findById(assignmentBuildingDTO.getBuildingId());
 
-        List<Long> idStaffs = assignmentBuildingDTO.getStaffs();
+
 
         List<UserEntity> staffs = this.userService.getStaffModels(1 , "STAFF");
         // cái bài toán giờ là sẽ có 1 cái List<> nhân viên mặc định , thì khi mà dữ liệu đổ về
@@ -92,7 +92,8 @@ public class BuildingAPI {
         // vd : List data đổ về là 1,2 | vd : list<> idnv 1,2,3,4 ==> thằng đánh tích là 1,2 cho nó vô 1 cái list , thằng không tích là 3,4 cho nó vô 1 cái list
         List<Long> checkedList = new ArrayList<>(); // Danh sách đã tích
         List<Long> uncheckedList = new ArrayList<>(); // Danh sách chưa tích
-        if (!idStaffs.isEmpty()){
+        if (!assignmentBuildingDTO.getStaffs().isEmpty()){
+            List<Long> idStaffs = assignmentBuildingDTO.getStaffs();
             for (UserEntity id : staffs) {
                 if (idStaffs.contains(id.getId())) {
                     checkedList.add(id.getId()); // Thêm vào danh sách đã tích
@@ -101,9 +102,9 @@ public class BuildingAPI {
                 }
             }
 
-            List<AssignmentBuildingEntity> AllAssignmentB = this.assignmentBuildingService.getAll();
+            List<AssignmentBuildingEntity> assignmentBuildingEntities = this.assignmentBuildingService.getAssignmentBuildingEntity(buildingEntity);
             List<UserEntity> staffAssignments = new ArrayList<UserEntity>();
-            for ( AssignmentBuildingEntity assignmentBuildingEntity : AllAssignmentB ){
+            for ( AssignmentBuildingEntity assignmentBuildingEntity : assignmentBuildingEntities ){
                 staffAssignments.add(assignmentBuildingEntity.getUserEntity());
             };
 
@@ -124,14 +125,20 @@ public class BuildingAPI {
                     this.assignmentBuildingService.deleteAssignment(userEntity,buildingEntity);
                 }
             }
-        }{
-            List<AssignmentBuildingEntity> AllAssignmentB = this.assignmentBuildingService.getAll();
+        } else {
+
+            List<AssignmentBuildingEntity> assignmentBuildingEntities = this.assignmentBuildingService.getAssignmentBuildingEntity(buildingEntity);
             List<UserEntity> staffAssignments = new ArrayList<UserEntity>();
-            for ( AssignmentBuildingEntity assignmentBuildingEntity : AllAssignmentB ){
+            for ( AssignmentBuildingEntity assignmentBuildingEntity : assignmentBuildingEntities ){
                 staffAssignments.add(assignmentBuildingEntity.getUserEntity());
             };
 
-            for ( Long id :idStaffs ){
+            List<Long>  AllStaff = new ArrayList<>();
+            for ( UserEntity sf : staffs ){
+                AllStaff.add(sf.getId());
+            }
+
+            for ( Long id : AllStaff){
                 UserEntity userEntity = this.userService.getUserById(id);
                 if ( staffAssignments.contains(userEntity)){
                     this.assignmentBuildingService.deleteAssignment(userEntity,buildingEntity);
@@ -139,9 +146,9 @@ public class BuildingAPI {
             }
         }
 
-        List<AssignmentBuildingEntity> assignmentBuildingEntities = this.assignmentBuildingService.getAssignmentBuildingEntity(buildingEntity);
+        List<AssignmentBuildingEntity> assignmentBuildingEntitiesFinal = this.assignmentBuildingService.getAssignmentBuildingEntity(buildingEntity);
+        System.out.println("ok");
 
-        return assignmentBuildingEntities;
 
     }
 
@@ -154,7 +161,7 @@ public class BuildingAPI {
 
     @PostMapping("/api/building/create")
     public void getCreateBuilding(@RequestBody BuildingDTO buildingDTO){
-        this.buildingService.saveBuilding(buildingDTO);
+        this.buildingService.createBuilding(buildingDTO);
     }
 
     @PostMapping("/api/building/update")

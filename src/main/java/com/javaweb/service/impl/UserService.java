@@ -2,6 +2,7 @@ package com.javaweb.service.impl;
 
 import com.javaweb.constant.SystemConstant;
 import com.javaweb.converter.UserConverter;
+import com.javaweb.entity.CustomerEntity;
 import com.javaweb.model.dto.PasswordDTO;
 import com.javaweb.model.dto.UserDTO;
 import com.javaweb.entity.RoleEntity;
@@ -101,6 +102,10 @@ public class UserService implements com.javaweb.service.UserService {
     public UserEntity getUserById(Long id) {
         return this.userRepository.findById(id).get();
     }
+
+
+
+
 
 
     @Override

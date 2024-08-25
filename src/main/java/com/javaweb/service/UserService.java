@@ -1,5 +1,6 @@
 package com.javaweb.service;
 
+import com.javaweb.entity.CustomerEntity;
 import com.javaweb.entity.UserEntity;
 import com.javaweb.model.dto.PasswordDTO;
 import com.javaweb.model.dto.UserDTO;
@@ -28,5 +29,7 @@ public interface UserService {
     int countTotalItems();
 
     UserEntity getUserById ( Long id);
+
+
 
 }
