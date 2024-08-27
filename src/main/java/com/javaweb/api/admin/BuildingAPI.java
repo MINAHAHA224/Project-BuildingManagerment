@@ -90,15 +90,15 @@ public class BuildingAPI {
 
         // cách làm check cái List<> id đổ về với cái List<> idnv
         // vd : List data đổ về là 1,2 | vd : list<> idnv 1,2,3,4 ==> thằng đánh tích là 1,2 cho nó vô 1 cái list , thằng không tích là 3,4 cho nó vô 1 cái list
-        List<Long> checkedList = new ArrayList<>(); // Danh sách đã tích
-        List<Long> uncheckedList = new ArrayList<>(); // Danh sách chưa tích
+        List<Long> checkedList = new ArrayList<>();
+        List<Long> uncheckedList = new ArrayList<>();
         if (!assignmentBuildingDTO.getStaffs().isEmpty()){
             List<Long> idStaffs = assignmentBuildingDTO.getStaffs();
             for (UserEntity id : staffs) {
                 if (idStaffs.contains(id.getId())) {
-                    checkedList.add(id.getId()); // Thêm vào danh sách đã tích
+                    checkedList.add(id.getId());
                 } else {
-                    uncheckedList.add(id.getId()); // Thêm vào danh sách chưa tích
+                    uncheckedList.add(id.getId());
                 }
             }
 

@@ -3,6 +3,7 @@ package com.javaweb.service;
 import com.javaweb.entity.CustomerEntity;
 import com.javaweb.entity.UserEntity;
 import com.javaweb.model.dto.PasswordDTO;
+import com.javaweb.model.dto.RegisterDTO;
 import com.javaweb.model.dto.UserDTO;
 import com.javaweb.exception.MyException;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,7 @@ public interface UserService {
 
     UserEntity getUserById ( Long id);
 
+    Boolean checkEmailExist ( String email);
 
-
+    void handleSaveRegister (RegisterDTO registerDTO);
 }

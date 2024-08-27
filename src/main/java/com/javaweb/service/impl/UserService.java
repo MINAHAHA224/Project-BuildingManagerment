@@ -4,6 +4,7 @@ import com.javaweb.constant.SystemConstant;
 import com.javaweb.converter.UserConverter;
 import com.javaweb.entity.CustomerEntity;
 import com.javaweb.model.dto.PasswordDTO;
+import com.javaweb.model.dto.RegisterDTO;
 import com.javaweb.model.dto.UserDTO;
 import com.javaweb.entity.RoleEntity;
 import com.javaweb.entity.UserEntity;
@@ -18,10 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,6 +37,8 @@ public class UserService implements com.javaweb.service.UserService {
 
     @Autowired
     private UserConverter userConverter;
+
+
 
 
     @Override
@@ -103,9 +103,34 @@ public class UserService implements com.javaweb.service.UserService {
         return this.userRepository.findById(id).get();
     }
 
+    @Override
+    public Boolean checkEmailExist(String email) {
+        return this.userRepository.existsByEmail(email);
+    }
 
+    @Override
+    public void handleSaveRegister(RegisterDTO registerDTO) {
+        if( registerDTO.getPassWord() != null ){
+            UserEntity newUser = new UserEntity();
+            List<RoleEntity> roles = new ArrayList<>();
+            RoleEntity role = this.roleRepository.findOneByCode("USER");
+            List<String> firstName = Arrays.asList(registerDTO.getFirstName().toLowerCase(Locale.ROOT).split(" "));
+            List<String> lastName = Arrays.asList(registerDTO.getLastName().toLowerCase(Locale.ROOT).split(" "));
+            String firstName2 = firstName.stream().map(it -> it).collect(Collectors.joining(" ")) ;
+            String lastName2 = lastName.stream().map(it->it).collect(Collectors.joining(" "));
+            String fullName = firstName2 + " " + lastName2;
+            String passWord = this.passwordEncoder.encode(registerDTO.getConfirmPassword());
+            roles.add(role);
+            newUser.setStatus(1);
+            newUser.setRoles(roles);
+            newUser.setUserName(registerDTO.getEmail());
+            newUser.setPassword(passWord);
+            newUser.setFullName(fullName);
+            newUser.setEmail(registerDTO.getEmail());
+            this.userRepository.save(newUser);
+        }
 
-
+    }
 
 
     @Override
@@ -199,4 +224,7 @@ public class UserService implements com.javaweb.service.UserService {
             userRepository.save(userEntity);
         }
     }
+
+
+
 }

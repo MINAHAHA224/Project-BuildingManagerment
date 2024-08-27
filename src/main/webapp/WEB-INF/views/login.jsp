@@ -37,23 +37,23 @@
 											<div class="mb-md-5 mt-md-4 pb-5 text-center">
 												<h2 class="fw-bold mb-2 text-uppercase">Login</h2>
 												<p class="text-white-50 mb-5">Please enter your login and password!</p>
-												<form action="j_spring_security_check" id="formLogin" method="post">
-												<div class="form-outline form-white mb-4">
-													<label class="form-label" for="userName">Email</label>
-													<input type="text" class="form-control" id="userName" name="j_username" placeholder="Tên đăng nhập">
-												</div>
+													<form action="j_spring_security_check" id="formLogin" method="post">
+														<div class="form-outline form-white mb-4">
+															<label class="form-label" for="userName">Email</label>
+															<input type="text" class="form-control" id="userName" name="j_username" placeholder="Tên đăng nhập">
+														</div>
 
-												<div class="form-outline form-white mb-4">
-													<label class="form-label" for="password">Password</label>
-													<input type="password" class="form-control" id="password" name="j_password" placeholder="Mật khẩu">
-												</div>
+														<div class="form-outline form-white mb-4">
+															<label class="form-label" for="password">Password</label>
+															<input type="password" class="form-control" id="password" name="j_password" placeholder="Mật khẩu">
+														</div>
 
-												<div class="form-check d-flex justify-content-center mb-5">
-													<div><input class="form-check-input me-2" type="checkbox" value="" id="form2Example3cg" /></div>
-													<div><label class="form-check-label">
-                                                        Remember Password
-                                                    </label></div>
-												</div>
+														<div class="form-check d-flex justify-content-center mb-5">
+															<div><input class="form-check-input me-2" type="checkbox" value="" id="form2Example3cg" /></div>
+															<div><label class="form-check-label">
+																Remember Password
+															</label></div>
+														</div>
 
 												<p class="small mb-2 pb-lg-2"><a class="text-white-50" href="#!">Forgot password?</a></p>
 
@@ -66,7 +66,7 @@
 												</div>
 											</div>
 											<div class="text-center">
-												<p class="mb-0 tex-center account">Don't have an account? <a href="#!" class="text-white-50 fw-bold">Sign Up</a></p>
+												<p class="mb-0 tex-center account">Don't have an account? <a href="/register" class="text-white-50 fw-bold">Sign Up</a></p>
 											</div>
 
 										</div>

@@ -80,6 +80,24 @@
                 </li>
             </ul>
         </li>
+
+
+        <li class="">
+            <a href="#" class="dropdown-toggle">
+                <i class="menu-icon fa fas fa-users"></i>
+                <span class="menu-text">Quản lí khách hàng</span>
+            </a>
+            <b class="arrow"></b>
+            <ul class="submenu">
+                <li class="">
+                    <a href='/admin/customer-list'>
+                        <i class="menu-icon fa fa-caret-right"></i>
+                        Danh sách khách hàng
+                    </a>
+                    <b class="arrow"></b>
+                </li>
+            </ul>
+        </li>
         <li class="">
             <a href="#" class="dropdown-toggle">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-badge-fill" viewBox="0 0 16 16">
@@ -93,23 +111,6 @@
                     <a href='/admin/user-list'>
 
                         Danh sách tài khoản
-                    </a>
-                    <b class="arrow"></b>
-                </li>
-            </ul>
-        </li>
-
-        <li class="">
-            <a href="#" class="dropdown-toggle">
-                <i class="menu-icon fa fas fa-users"></i>
-                <span class="menu-text">Quản lí khách hàng</span>
-            </a>
-            <b class="arrow"></b>
-            <ul class="submenu">
-                <li class="">
-                    <a href='/admin/customer-list'>
-                        <i class="menu-icon fa fa-caret-right"></i>
-                        Danh sách khách hàng
                     </a>
                     <b class="arrow"></b>
                 </li>

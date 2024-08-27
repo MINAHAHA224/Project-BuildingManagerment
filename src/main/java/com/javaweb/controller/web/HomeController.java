@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
 @Controller(value = "homeControllerOfWeb")
 public class HomeController {
 
-	@RequestMapping(value = "/trang-chu", method = RequestMethod.GET)
+	@GetMapping(value = "/trang-chu")
 	public ModelAndView homePage(BuildingSearchRequest buildingSearchRequest, HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView("web/home");
         mav.addObject("modelSearch", buildingSearchRequest);
@@ -51,18 +51,18 @@ public class HomeController {
         return mav;
     }
 
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	@GetMapping(value = "/login")
 	public ModelAndView login() {
 		ModelAndView mav = new ModelAndView("login");
 		return mav;
 	}
 
-	@RequestMapping(value = "/access-denied", method = RequestMethod.GET)
+	@GetMapping(value = "/access-denied")
 	public ModelAndView accessDenied() {
 		return new ModelAndView("redirect:/login?accessDenied");
 	}
 
-	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	@GetMapping(value = "/logout")
 	public ModelAndView logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth != null) {

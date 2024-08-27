@@ -1,5 +1,6 @@
 package com.javaweb.converter;
 
+import com.javaweb.model.dto.RegisterDTO;
 import com.javaweb.model.dto.UserDTO;
 import com.javaweb.entity.UserEntity;
 import org.modelmapper.ModelMapper;
@@ -21,5 +22,7 @@ public class UserConverter {
         UserEntity result = modelMapper.map(dto, UserEntity.class);
         return result;
     }
+
+
     
 }
