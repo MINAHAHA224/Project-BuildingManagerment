@@ -423,7 +423,7 @@
                             <ul class="pagination justify-content-center">
                                 <li class="page-item">
                                     <a class="${ currentPage eq 1 ? 'disabled page-link ' : 'page-link'}"
-                                       href="/admin/customer-list?page=${currentPage - 1}"
+                                       href="/admin/building-list?page=${currentPage - 1}"
                                        aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
@@ -431,7 +431,7 @@
                                 <c:forEach begin="0" end="${totalPages - 1}" varStatus="loop">
                                     <li class="page-item">
                                         <a class="${ currentPage eq (loop.index +1) ? 'active page-link ' : 'page-link'}"
-                                           href="/admin/customer-list?page=${loop.index +1}">${loop.index +1}
+                                           href="/admin/building-list?page=${loop.index +1}">${loop.index +1}
                                         </a>
                                     </li>
 
@@ -439,7 +439,7 @@
 
                                 <li class="page-item">
                                     <a class="${ currentPage eq totalPages ? 'disabled page-link ' : 'page-link'}"
-                                       href="/admin/customer-list?page=${currentPage + 1}" aria-label="Next">
+                                       href="/admin/building-list?page=${currentPage + 1}" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>

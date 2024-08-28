@@ -11,8 +11,10 @@ import com.javaweb.model.response.StaffResponseDTO;
 import com.javaweb.service.AssignmentBuildingService;
 import com.javaweb.service.BuildingService;
 import com.javaweb.service.UserService;
+import com.javaweb.utils.HandleUploadFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,9 @@ public class BuildingAPI {
 
     @Autowired
     private AssignmentBuildingService assignmentBuildingService;
+
+    @Autowired
+    private HandleUploadFile handleUploadFile;
 
     @PostMapping(value = "/api/building/{id}/staffs")
     public ResponseDTO getStaffModel (@PathVariable Long id){
@@ -160,8 +165,11 @@ public class BuildingAPI {
     }
 
     @PostMapping("/api/building/create")
-    public void getCreateBuilding(@RequestBody BuildingDTO buildingDTO){
-        this.buildingService.createBuilding(buildingDTO);
+    public void getCreateBuilding(@RequestPart("buildingDTO") BuildingDTO buildingDTO ,@RequestPart("imageFile") MultipartFile file  ){
+
+        String avatar = this.handleUploadFile.toHandleUploadFile(file , "building");
+
+        this.buildingService.createBuilding(buildingDTO , avatar);
     }
 
     @PostMapping("/api/building/update")

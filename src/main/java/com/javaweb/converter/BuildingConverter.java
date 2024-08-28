@@ -15,7 +15,7 @@ public class BuildingConverter {
     public BuildingDTO toBuildingDTO (BuildingEntity buildingEntity){
         BuildingDTO buildingDTO = new BuildingDTO();
         buildingDTO = this.modelMapper.map(buildingEntity , BuildingDTO.class);
-
+        buildingDTO.setImage(buildingEntity.getAvatar());
         return buildingDTO;
     }
 

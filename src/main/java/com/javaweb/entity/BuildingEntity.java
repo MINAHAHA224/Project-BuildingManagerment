@@ -58,6 +58,16 @@ public class BuildingEntity {
     @Column(name ="managerphone")
     private String managerPhone;
 
+    @Column(name = "avatar")
+    private String avatar;
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
 
     @OneToMany(mappedBy = "buildingId" , cascade = {CascadeType.MERGE , CascadeType.PERSIST ,CascadeType.REMOVE} )
     private List<RentareaEntity> rentValue;

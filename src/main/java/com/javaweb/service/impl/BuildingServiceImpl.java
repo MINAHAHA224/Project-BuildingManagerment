@@ -77,11 +77,12 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public void createBuilding(BuildingDTO buildingDTO) {
+    public void createBuilding(BuildingDTO buildingDTO , String avatar) {
         BuildingEntity buildingEntity = new BuildingEntity();
         buildingEntity = this.modelMapper.map(buildingDTO ,BuildingEntity.class);
         String type = buildingDTO.getTypeCode().stream().map(it ->  it ).collect(Collectors.joining(","));
         buildingEntity.setType(type);
+        buildingEntity.setAvatar(avatar);
         BuildingEntity building = this.buildingRepository.save(buildingEntity);
 
         // update thi phai save theo id cu ( vi truong hop lỡ thằng id cũ nó sửa ) còn Create thì cứ
@@ -118,33 +119,5 @@ public class BuildingServiceImpl implements BuildingService {
         this.buildingRepository.save(UpdateBuildingEntity);
     }
 
-    @Override
-    public String handleUpLoadFile(MultipartFile file, String folder) {
-        if (file.isEmpty()) {
-            return "";
-        }
-        String rootPath = this.servletContext.getRealPath("/resources/static/admin");
-        String finalName = "";
-        try {
-            byte[] bytes;
-            bytes = file.getBytes();
 
-            File dir = new File(rootPath + File.separator + folder);
-            if (!dir.exists())
-                dir.mkdirs();
-            // Create the file on server
-            finalName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
-
-            File serverFile = new File(dir.getAbsolutePath() + File.separator + finalName);
-
-            BufferedOutputStream stream = new BufferedOutputStream(
-                    new FileOutputStream(serverFile));
-            stream.write(bytes);
-            stream.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return finalName;
-    }
 }

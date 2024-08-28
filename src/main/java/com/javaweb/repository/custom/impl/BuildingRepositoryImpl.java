@@ -103,7 +103,7 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
     public Page<BuildingEntity> findAll(BuildingSearchBuilder buildingSearchBuilder , Pageable pageable) {
 
 
-        StringBuilder sql = new StringBuilder("SELECT  building.id , building.name , building.street , building.ward , building.district , building.numberofbasement , building.floorarea , building.direction , building.level , building.rentprice , building.rentpricedescription ,building.servicefee , building.brokeragefee , building.type , building.managername,building.managerphone\r\n"
+        StringBuilder sql = new StringBuilder("SELECT  building.id , building.name , building.street , building.ward , building.district , building.numberofbasement , building.floorarea , building.direction , building.level , building.rentprice , building.rentpricedescription ,building.servicefee , building.brokeragefee , building.type ,building.avatar, building.managername,building.managerphone\r\n"
                 + "FROM building");
         joinTable(buildingSearchBuilder ,sql);
         sql.append(SystemConstant.ONE_EQUAL_ONE);

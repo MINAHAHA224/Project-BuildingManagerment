@@ -321,6 +321,22 @@
                             </div>
 
                         </div>
+                        <div class="col-xs-12">
+                            <div class=" row form-group ">
+                                <label class="col-sm-3">Avatar</label>
+                                <div class="col-sm-3 ">
+                                    <input  type="file" id="avatarFile"
+                                           accept=".png, .jpg, .jpeg" name="imageFile">
+                                </div>
+                                <div class="col-sm-3 ">
+                                    <img src="../../../../target/spring-boot-1.0/resources/images/building/${buildingModel.image}" style="max-height: 250px; display: none;" alt="avatar preview"
+                                         id="avatarPreview" />
+                                </div>
+
+                            </div>
+
+                        </div>
+
 
 
                         <div class="col-xs-12">
@@ -365,37 +381,50 @@
     </div>
 </div>
 <script>
-    function btnCreate(){
-
-        var data = {}
-        var typeCode = []
-        var formData = $('#form-edit').serializeArray();
-        $.each(formData, function (i, v) {
-            if (v.name !== 'typeCode') {
-                data["" + v.name + ""] = v.value;
-            } else {
-                typeCode.push(v.value);
-            }
-
+    //upload image
+    $(document).ready(() => {
+        const avatarFile = $("#avatarFile");
+        avatarFile.change(function (e) {
+            const imgURL = URL.createObjectURL(e.target.files[0]);
+            $("#avatarPreview").attr("src", imgURL);
+            $("#avatarPreview").css({ "display": "block" });
         });
+    });
+
+    function btnCreate() {
+        var data = {};
+        var typeCode = [];
+
+        $('#form-edit').serializeArray().forEach(function (item) {
+            if (item.name !== 'typeCode') {
+                data[item.name] = item.value;
+            } else {
+                typeCode.push(item.value);
+            }
+        });
+
         data['typeCode'] = typeCode;
+        var imageFile = $('#avatarFile')[0].files[0];
+
+        var formData = new FormData();
+        formData.append('buildingDTO', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+        formData.append('imageFile', imageFile);
 
         $.ajax({
             type: "POST",
             url: "http://localhost:8081/api/building/create",
-            data: JSON.stringify(data),
-            contentType: "application/json",
-            dataType: "JSON",
-            success: function (respond) {
-                console.log(respond)
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                console.log("success");
             },
-            error: function (respond) {
-                console.log(respond)
+            error: function (response) {
+                console.log("error");
             }
         });
-
-
     }
+
 
     $('#btnCancel').click(function (e){
         window.location.href ="/admin/building-list";

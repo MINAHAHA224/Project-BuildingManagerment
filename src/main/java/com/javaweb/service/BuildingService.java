@@ -20,9 +20,9 @@ public interface BuildingService {
     @Transactional
     void deleteBuilding( Long id);
 
-    void createBuilding (BuildingDTO buildingDTO);
+    void createBuilding (BuildingDTO buildingDTO , String avatar);
 
     void updateBuilding ( BuildingDTO buildingDTO);
 
-    String handleUpLoadFile (MultipartFile file , String folder );
+
 }
