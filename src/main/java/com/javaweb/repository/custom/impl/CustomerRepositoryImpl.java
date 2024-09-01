@@ -74,11 +74,7 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
 
         // Đếm số bản ghi ( row )
         List<Object> rows = query.getResultList();
-        long i = 0;
-        for ( Object row : rows ){
-            i+=1;
-        }
-        long totalResults = i;
+        long totalResults = rows.size();
 
 
         query.setFirstResult((int)pageable.getOffset());

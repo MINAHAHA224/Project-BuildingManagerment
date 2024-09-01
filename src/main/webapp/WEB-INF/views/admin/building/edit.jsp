@@ -329,7 +329,8 @@
                                            accept=".png, .jpg, .jpeg" name="imageFile">
                                 </div>
                                 <div class="col-sm-3 ">
-                                    <img src="../../../../target/spring-boot-1.0/resources/images/building/${buildingModel.image}" style="max-height: 250px; display: none;" alt="avatar preview"
+                                    <img src="../static/img/loading.gif" style="max-height: 250px;" alt="avatar preview"
+<%--                                         src="../../../../target/spring-boot-1.0/resources/images/building/${buildingModel.image}"--%>
                                          id="avatarPreview" />
                                 </div>
 
@@ -411,7 +412,7 @@
         formData.append('imageFile', imageFile);
 
         $.ajax({
-            type: "POST",
+            type: "PUT",
             url: "http://localhost:8081/api/building/create",
             data: formData,
             processData: false,
@@ -448,7 +449,7 @@
 
 
         $.ajax({
-            type: "POST",
+            type: "PUT",
             url: "http://localhost:8081/api/building/update",
             data: JSON.stringify(data),
             contentType: "application/json",

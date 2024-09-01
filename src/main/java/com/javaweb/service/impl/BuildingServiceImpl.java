@@ -50,14 +50,12 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     public Page<BuildingSearchResponse> getBuildingSearch(BuildingSearchBuilder buildingSearchBuilder, Pageable pageable ) {
         Page<BuildingEntity> buildingEntities = this.buildingRepository.findAll(buildingSearchBuilder , pageable );
-
         List<BuildingSearchResponse> results = new ArrayList<>();
         for (BuildingEntity buildingEntity : buildingEntities.getContent() ){
             BuildingSearchResponse buildingSearchResponse = this.buildingEntityToBuildingSearchResponse.toBuildingSearchResponse(buildingEntity);
             results.add(buildingSearchResponse);
         }
-
-        return new PageImpl<>(results, pageable, buildingEntities.getTotalPages());
+        return new PageImpl<>(results, pageable, buildingEntities.getTotalElements());
     }
 
     @Override

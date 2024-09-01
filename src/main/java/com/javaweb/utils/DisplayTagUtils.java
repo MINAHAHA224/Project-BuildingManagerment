@@ -25,4 +25,21 @@ public class DisplayTagUtils {
             dto.setPage(page);
         }
     }
+
+    public  static void ofs ( HttpServletRequest request, AbstractDTO dto){
+        if  ( dto != null){
+            String sPage = request.getParameter(TableTagParameters.SORT_AMOUNT_PAGE);
+            Integer page = 1 ;
+            if (StringUtils.isNotBlank(sPage)){
+                try {
+                    page = Integer.valueOf(sPage);
+                } catch (Exception e) {
+                    //log.error(e.getMessage());
+                }
+            }
+            dto.setPage(page);
+            }
+        }
+
+
 }

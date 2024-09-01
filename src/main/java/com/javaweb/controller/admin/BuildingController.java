@@ -15,6 +15,7 @@ import com.javaweb.model.response.BuildingSearchResponse;
 import com.javaweb.security.utils.SecurityUtils;
 import com.javaweb.service.BuildingService;
 import com.javaweb.service.UserService;
+import com.javaweb.utils.DisplayTagUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -46,8 +47,8 @@ public class BuildingController {
     private BuildingConverter buildingConverter;
 
     @RequestMapping(value = "/admin/building-list" , method = RequestMethod.GET)
-    public ModelAndView getBuildingListPage(@ModelAttribute BuildingSearchRequest buildingSearchRequest , HttpServletRequest request,
-           @RequestParam("page") Optional<String> pageOptional ){
+    public ModelAndView getBuildingListPage(@ModelAttribute BuildingSearchRequest buildingSearchRequest , HttpServletRequest request
+           ){
         ModelAndView mav = new ModelAndView("admin/building/list");
         mav.addObject("buildingDTOSearch" ,buildingSearchRequest);
 
@@ -59,18 +60,8 @@ public class BuildingController {
         mav.addObject("staffs" , staffs);
         mav.addObject("rentCode" ,rentCode );
 
-        int page = 1;
-        try {
-            if (pageOptional.isPresent()) {
-                page = Integer.parseInt(pageOptional.get());
-            } else {
-                page = 1;
-            }
-        } catch (Exception e) {
-            page = 1;
-            // TODO: handle exception
-        }
-        Pageable pageable = PageRequest.of(page - 1 , 2 );
+        DisplayTagUtils.ofs(request ,buildingSearchRequest );
+        Pageable pageable = PageRequest.of(buildingSearchRequest.getPage() - 1 , buildingSearchRequest.getMaxPageItems() );
         //check role
 
 
@@ -79,16 +70,18 @@ public class BuildingController {
             buildingSearchRequest.setStaffId(id);
             BuildingSearchBuilder buildingSearchBuilder = this.buildingSearchBuilderConverter.toBuildingSearchBuilder(buildingSearchRequest);
             Page<BuildingSearchResponse> buildingSearchResponses = this.buildingService.getBuildingSearch(buildingSearchBuilder  , pageable);
+            long totalPages = (long)Math.ceil((double)buildingSearchResponses.getTotalElements()/2);
             mav.addObject("buildingLists" , buildingSearchResponses.getContent() );
-            mav.addObject("totalPages" , buildingSearchResponses.getTotalPages());
-            mav.addObject("currentPage" ,page );
+            mav.addObject("totalPages" , totalPages);
+            mav.addObject("currentPage" ,buildingSearchRequest.getPage() );
         }
         else {
             BuildingSearchBuilder buildingSearchBuilder = this.buildingSearchBuilderConverter.toBuildingSearchBuilder(buildingSearchRequest);
             Page<BuildingSearchResponse> buildingSearchResponses = this.buildingService.getBuildingSearch(buildingSearchBuilder  , pageable);
+            long totalPages = (long)Math.ceil((double)buildingSearchResponses.getTotalElements()/2);
             mav.addObject("buildingLists" , buildingSearchResponses.getContent() );
-            mav.addObject("totalPages" , buildingSearchResponses.getTotalPages());
-            mav.addObject("currentPage" ,page );
+            mav.addObject("totalPages" , totalPages);
+            mav.addObject("currentPage" ,buildingSearchRequest.getPage() );
         }
 
         // custom lai staffid của manager và sttaff
@@ -96,7 +89,7 @@ public class BuildingController {
 
 
 
-        mav.addObject("currentPage" , page );
+        mav.addObject("currentPage" , buildingSearchRequest.getPage() );
 
 
 

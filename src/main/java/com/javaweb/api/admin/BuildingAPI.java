@@ -73,7 +73,7 @@ public class BuildingAPI {
         return responseDTO;
     }
 
-    @PostMapping("/api/building/assignmentBuilding")
+    @PutMapping("/api/building/assignmentBuilding")
     public void getAssignmentBuilding (@RequestBody AssignmentBuildingDTO assignmentBuildingDTO){
 
         BuildingEntity buildingEntity = this.buildingService.findById(assignmentBuildingDTO.getBuildingId());
@@ -81,20 +81,7 @@ public class BuildingAPI {
 
 
         List<UserEntity> staffs = this.userService.getStaffModels(1 , "STAFF");
-        // cái bài toán giờ là sẽ có 1 cái List<> nhân viên mặc định , thì khi mà dữ liệu đổ về
-        // mà dữ liệu đổ về chỉ có thằng được tick thôi
-        // TH1 : check ấy thằng tick với danh sách nhân viên , thằng nào tích có nghĩa là ==  với nhân viên
-            // lại chia làm 2TH :
-                // THa : thằng đó đã có tòn tại buildingid ==> nó đang tick ==> để nguyên
-                // THb : thằng đó không tồn tại cái buildingid ==> chưa tick ==> new AssibnmentBuilding và save()
-        //TH2 : check ấy thằng tick với danh sách nhân viên , thằng nào không tích tức là != nhân viên( có
-        // nghĩa là không gửi về những vẫn check )
-            // lại chia làm 2TH :
-                //THa : thằng đó đã có tòn tại buildingid ==> xóa cái AssibnmentBuilding đó đi
-                //THb : thằng đó không tồn tại cái buildingid ==> để nguyên
 
-        // cách làm check cái List<> id đổ về với cái List<> idnv
-        // vd : List data đổ về là 1,2 | vd : list<> idnv 1,2,3,4 ==> thằng đánh tích là 1,2 cho nó vô 1 cái list , thằng không tích là 3,4 cho nó vô 1 cái list
         List<Long> checkedList = new ArrayList<>();
         List<Long> uncheckedList = new ArrayList<>();
         if (!assignmentBuildingDTO.getStaffs().isEmpty()){
@@ -157,14 +144,14 @@ public class BuildingAPI {
 
     }
 
-    @PostMapping("/api/building/delete-{ids}")
+    @DeleteMapping("/api/building/delete-{ids}")
     public void getDeleteBuilding (@PathVariable List<Long>  ids){
        for ( Long id :ids ){
            this.buildingService.deleteBuilding(id);
        }
     }
 
-    @PostMapping("/api/building/create")
+    @PutMapping("/api/building/create")
     public void getCreateBuilding(@RequestPart("buildingDTO") BuildingDTO buildingDTO ,@RequestPart("imageFile") MultipartFile file  ){
 
         String avatar = this.handleUploadFile.toHandleUploadFile(file , "building");
@@ -172,7 +159,7 @@ public class BuildingAPI {
         this.buildingService.createBuilding(buildingDTO , avatar);
     }
 
-    @PostMapping("/api/building/update")
+    @PutMapping("/api/building/update")
     public  void getUpdateBuilding (@RequestBody BuildingDTO buildingDTO){
         this.buildingService.updateBuilding(buildingDTO);
     }

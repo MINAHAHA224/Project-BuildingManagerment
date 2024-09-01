@@ -315,7 +315,7 @@
 <script>
     function btnDeleteOnly(id){
         $.ajax({
-            type : "POST",
+            type : "DELETE",
             url : "http://localhost:8081/api/customer/transaction-"+id,
             // data : JSON.stringify(data),
             // contentType : "application/JSON",
@@ -399,7 +399,7 @@
 
         window.location.href = "/admin/customer-edit-"+customerTransID;
         $.ajax({
-            type : "POST",
+            type : "PUT",
             url : "http://localhost:8081/api/customer/transaction",
             data : JSON.stringify(data),
             contentType : "application/JSON",
@@ -433,7 +433,7 @@
         })
 
         $.ajax({
-            type : "POST",
+            type : "PUT",
             url : "http://localhost:8081/api/customer/create",
             data : JSON.stringify(data),
             contentType : "application/JSON",
@@ -456,7 +456,7 @@
         })
         window.location.href ="/admin/customer-list";
         $.ajax({
-            type : "POST",
+            type : "PUT",
             url : "http://localhost:8081/api/customer/update",
             data : JSON.stringify(data),
             contentType : "application/JSON",

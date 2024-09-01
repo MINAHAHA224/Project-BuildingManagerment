@@ -65,7 +65,7 @@ public class CustomerAPI {
         return responseDTO;
     }
 
-    @PostMapping("/api/customer/assignmentCustomer")
+    @PutMapping("/api/customer/assignmentCustomer")
     public void getAssigmentCustomer (@RequestBody AssignmentCustomerDTO assignmentCustomerDTO){
         CustomerEntity customerEntity = this.customerService.getCustomerById(assignmentCustomerDTO.getCustomerId());
         List<UserEntity> allStaffs = this.userService.getStaffModels(1 , "STAFF");
@@ -124,7 +124,7 @@ public class CustomerAPI {
     }
 
 
-    @PostMapping("/api/customer/create")
+    @PutMapping("/api/customer/create")
     public  void getCreateCustomer (@RequestBody CustomerDTO customerDTO){
 
         if (SecurityUtils.getPrincipal().getId() != null) {
@@ -136,7 +136,7 @@ public class CustomerAPI {
 
     }
 
-    @PostMapping("/api/customer/update")
+    @PutMapping("/api/customer/update")
     public  void getUpdateCustomer (@RequestBody CustomerDTO customerDTO){
 
         if (SecurityUtils.getPrincipal().getId() != null) {
@@ -149,13 +149,13 @@ public class CustomerAPI {
     }
 
 
-    @PostMapping("/api/customer/{customerId}")
+    @DeleteMapping("/api/customer/{customerId}")
     public void getDeleteCustomer (@PathVariable List<Long> customerId){
 
         this.customerService.handleDeleteCustomer(customerId);
     }
 
-    @PostMapping("/api/customer/transaction")
+    @PutMapping ("/api/customer/transaction")
     public void getTransaction (@RequestBody TransactionDTO transactionDTO){
         if (transactionDTO.getNote()  != null ){
             transactionDTO.setManagementStaff(SecurityUtils.getPrincipal().getFullName());
@@ -165,7 +165,7 @@ public class CustomerAPI {
 
     }
 
-    @PostMapping("/api/customer/transaction-{id}")
+    @DeleteMapping ("/api/customer/transaction-{id}")
     public void getDeleteTransaction( @PathVariable Long id ){
         this.transactionService.handleDeleteTransaction(id);
     }

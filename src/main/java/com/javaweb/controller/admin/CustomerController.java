@@ -14,6 +14,7 @@ import com.javaweb.security.utils.SecurityUtils;
 import com.javaweb.service.CustomerService;
 import com.javaweb.service.TransactionService;
 import com.javaweb.service.UserService;
+import com.javaweb.utils.DisplayTagUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.jws.WebParam;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -48,37 +50,29 @@ public class CustomerController {
 
 
     @GetMapping("/admin/customer-list")
-    public ModelAndView getCustomerPage (@ModelAttribute CustomerSearchRequest customerSearchRequest,
-                                         @RequestParam("page")Optional<String> pageOptional){
+    public ModelAndView getCustomerPage (@ModelAttribute CustomerSearchRequest customerSearchRequest , HttpServletRequest request){
         ModelAndView mav = new ModelAndView("admin/customer/list");
         mav.addObject("ModelCustomerRequest" , customerSearchRequest);
         Map<Long , String> listStaffs = this.userService.getStaff( 1 , "STAFF");
         mav.addObject("listStaffs" , listStaffs);
 
-        int page = 1;
-        try {
-            if(pageOptional.isPresent()){
-                page = Integer.parseInt(pageOptional.get());
-            }else {
-                page = 1 ;
-            }
-        }catch (Exception e){
-            page = 1 ;
-        }
-        Pageable pageable = PageRequest.of(page - 1 , 2 );
+        DisplayTagUtils.ofs(request,customerSearchRequest);
+        Pageable pageable = PageRequest.of(customerSearchRequest.getPage() - 1 , 2 );
         if(SecurityUtils.getAuthorities().contains("ROLE_STAFF")){
             customerSearchRequest.setStaffId(SecurityUtils.getPrincipal().getId());
             CustomerSearchBuilder customerSearchBuilder = this.customerSearchBuilderConverter.toCustomerSearchBuilder(customerSearchRequest);
             Page<CustomerSearchResponse> customerSearchResponse =  this.customerService.getAllCustomer(customerSearchBuilder , pageable);
+            long totalPages = (long)Math.ceil((double)customerSearchResponse.getTotalElements()/2);
             mav.addObject("ListCustomerResponse" , customerSearchResponse.getContent());
-            mav.addObject("totalPages" , customerSearchResponse.getTotalPages());
-            mav.addObject("currentPage" ,page );
+            mav.addObject("totalPages" , totalPages);
+            mav.addObject("currentPage" ,customerSearchRequest.getPage() );
         }else {
             CustomerSearchBuilder customerSearchBuilder = this.customerSearchBuilderConverter.toCustomerSearchBuilder(customerSearchRequest);
             Page<CustomerSearchResponse> customerSearchResponse = this.customerService.getAllCustomer(customerSearchBuilder, pageable);
+            long totalPages = (long)Math.ceil((double)customerSearchResponse.getTotalElements()/2);
             mav.addObject("ListCustomerResponse", customerSearchResponse.getContent());
-            mav.addObject("totalPages", customerSearchResponse.getTotalPages());
-            mav.addObject("currentPage", page);
+            mav.addObject("totalPages", totalPages);
+            mav.addObject("currentPage", customerSearchRequest.getPage());
         }
 
 

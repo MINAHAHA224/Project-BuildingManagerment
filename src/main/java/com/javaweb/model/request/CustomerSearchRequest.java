@@ -1,6 +1,8 @@
 package com.javaweb.model.request;
 
-public class CustomerSearchRequest {
+import com.javaweb.model.dto.AbstractDTO;
+
+public class CustomerSearchRequest extends AbstractDTO {
 
     private String name ;
     private String email;

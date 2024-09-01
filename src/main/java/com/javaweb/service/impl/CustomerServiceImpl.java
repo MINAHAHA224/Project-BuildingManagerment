@@ -40,7 +40,7 @@ public class CustomerServiceImpl  implements CustomerService {
             customerSearchResponses.add(customerResponse);
 
         }
-        return new PageImpl<>(customerSearchResponses,pageable ,customerEntities.getTotalPages()  ) ;
+        return new PageImpl<>(customerSearchResponses,pageable ,customerEntities.getTotalElements()  ) ;
     }
 
     @Override

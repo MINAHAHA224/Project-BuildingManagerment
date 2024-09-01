@@ -328,28 +328,41 @@
                 <c:if test="${totalPages != 0}">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination justify-content-center">
-                            <li class="page-item">
-                                <a class="${ currentPage eq 1 ? 'disabled page-link ' : 'page-link'}"
-                                   href="/admin/customer-list?page=${currentPage - 1}"
-                                   aria-label="Previous">
+                            <c:if test="${currentPage == 1}">
+                                <li class="disabled page-item">
                                     <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
+                                </li>
+                            </c:if>
+                            <c:if test="${currentPage != 1}">
+                                <li class="page-item">
+                                    <a
+                                            href="/admin/customer-list?page=${currentPage - 1}"
+                                            aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            </c:if>
                             <c:forEach begin="0" end="${totalPages - 1}" varStatus="loop">
                                 <li class="page-item">
                                     <a class="${ currentPage eq (loop.index +1) ? 'active page-link ' : 'page-link'}"
                                        href="/admin/customer-list?page=${loop.index +1}">${loop.index +1}
                                     </a>
                                 </li>
-
                             </c:forEach>
-
-                            <li class="page-item">
-                                <a class="${ currentPage eq totalPages ? 'disabled page-link ' : 'page-link'}"
-                                   href="/admin/customer-list?page=${currentPage + 1}" aria-label="Next">
+                            <c:if test="${currentPage != totalPages}">
+                                <li class="page-item">
+                                    <a
+                                            href="/admin/customer-list?page=${currentPage + 1}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </c:if>
+                            <c:if test="${currentPage == totalPages}">
+                                <li class="disabled page-item">
                                     <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
+                                </li>
+                            </c:if>
+
                         </ul>
                     </nav>
                 </c:if>
@@ -457,7 +470,7 @@
         }).get();
         data['staffs'] = staffs;
         $.ajax({
-            type: "POST",
+            type: "PUT",
             url: "http://localhost:8081/api/customer/assignmentCustomer",
             data: JSON.stringify(data),
             contentType: "application/json",
@@ -499,7 +512,7 @@
     function DeleteCustomerId (data){
 
         $.ajax({
-            type : "POST",
+            type : "DELETE",
             url : "http://localhost:8081/api/customer/"+data,
             // data : JSON.stringify(data),
             // contentType : "application/JSON",

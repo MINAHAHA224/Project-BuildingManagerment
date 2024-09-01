@@ -115,13 +115,9 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
         String querySql = sql.toString();
         Query query = entityManager.createNativeQuery( querySql , BuildingEntity.class);
 
-        // Đếm số bản ghi ( row )
+        // Đếm số bản ghi( row ) => so page
         List<Object> rows = query.getResultList();
-        long i = 0;
-        for ( Object row : rows ){
-            i+=1;
-        }
-        long totalResults = i;
+        long totalResults = rows.size();
 
         // setup pagination cho List<BuildingEntity>
         query.setFirstResult((int) pageable.getOffset());
