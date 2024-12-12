@@ -69,58 +69,73 @@ public class CustomerAPI {
     public void getAssigmentCustomer (@RequestBody AssignmentCustomerDTO assignmentCustomerDTO){
         CustomerEntity customerEntity = this.customerService.getCustomerById(assignmentCustomerDTO.getCustomerId());
         List<UserEntity> allStaffs = this.userService.getStaffModels(1 , "STAFF");
+        // logic code moi
         List<AssignmentCustomerEntity> staffAssignmentCustomers = this.assignmentCustomerService.getStaffAssignmentCustomers(customerEntity);
-        List<UserEntity> staffs = new ArrayList<>();
-        for ( AssignmentCustomerEntity satffAssignmentCustomer : staffAssignmentCustomers ){
-            staffs.add(satffAssignmentCustomer.getUserEntity());
-        }
-
-        List<Long> uncheck = new ArrayList<>();
-        List<Long> check = new ArrayList<>();
-
-
-        if( !assignmentCustomerDTO.getStaffs().isEmpty()){
-            List<Long> staffDTO = assignmentCustomerDTO.getStaffs();
-            for (UserEntity allStaff : allStaffs ){
-                if ( staffDTO.contains(allStaff.getId())){
-                    check.add(allStaff.getId());
-                }
-                else {
-                    uncheck.add(allStaff.getId());
-                }
-            }
-
-            for ( Long  id :  check ){
-                UserEntity userEntity = this.userService.getUserById(id);
-                if ( !staffs.contains(userEntity)){
-                    AssignmentCustomerEntity assignmentCustomerEntity = new AssignmentCustomerEntity();
-                    assignmentCustomerEntity.setUserEntity(userEntity);
-                    assignmentCustomerEntity.setCustomerEntity(customerEntity);
-                    this.assignmentCustomerService.handleSave(assignmentCustomerEntity);
-                }
-
-            }
-
-            for ( Long  id :  uncheck  ){
-                UserEntity userEntity = this.userService.getUserById(id);
-                if ( staffs.contains(userEntity)) {
-
-                    this.assignmentCustomerService.handleDelete( userEntity , customerEntity);
-                }
-            }
-        }else {
-            List<Long>  AllStaff = new ArrayList<>();
-            for ( UserEntity sf : allStaffs ){
-                AllStaff.add(sf.getId());
-            }
-            for ( Long  id :  AllStaff  ){
-                UserEntity userEntity = this.userService.getUserById(id);
-                if ( staffs.contains(userEntity)) {
-
-                    this.assignmentCustomerService.handleDelete( userEntity , customerEntity);
-                }
-            }
-        }
+        for ( AssignmentCustomerEntity staffAssignmentCustomer : staffAssignmentCustomers ){
+            this.assignmentCustomerService.handleDelete( staffAssignmentCustomer.getUserEntity() , customerEntity);
+        };
+        if ( !assignmentCustomerDTO.getStaffs().isEmpty()){
+            for ( Long idStaff : assignmentCustomerDTO.getStaffs() ){
+                AssignmentCustomerEntity assignmentCustomerEntity = new AssignmentCustomerEntity();
+                UserEntity userEntity = this.userService.getUserById(idStaff);
+                assignmentCustomerEntity.setUserEntity(userEntity);
+                assignmentCustomerEntity.setCustomerEntity(customerEntity);
+                this.assignmentCustomerService.handleSave(assignmentCustomerEntity);
+            };
+        };
+    // logic code này chạy chậm khi dữ liệu nhân viên nhiều
+//        List<AssignmentCustomerEntity> staffAssignmentCustomers = this.assignmentCustomerService.getStaffAssignmentCustomers(customerEntity);
+//        List<UserEntity> staffs = new ArrayList<>();
+//        for ( AssignmentCustomerEntity satffAssignmentCustomer : staffAssignmentCustomers ){
+//            staffs.add(satffAssignmentCustomer.getUserEntity());
+//        }
+//
+//        List<Long> uncheck = new ArrayList<>();
+//        List<Long> check = new ArrayList<>();
+//
+//
+//        if( !assignmentCustomerDTO.getStaffs().isEmpty()){
+//            List<Long> staffDTO = assignmentCustomerDTO.getStaffs();
+//            for (UserEntity allStaff : allStaffs ){
+//                if ( staffDTO.contains(allStaff.getId())){
+//                    check.add(allStaff.getId());
+//                }
+//                else {
+//                    uncheck.add(allStaff.getId());
+//                }
+//            }
+//
+//            for ( Long  id :  check ){
+//                UserEntity userEntity = this.userService.getUserById(id);
+//                if ( !staffs.contains(userEntity)){
+//                    AssignmentCustomerEntity assignmentCustomerEntity = new AssignmentCustomerEntity();
+//                    assignmentCustomerEntity.setUserEntity(userEntity);
+//                    assignmentCustomerEntity.setCustomerEntity(customerEntity);
+//                    this.assignmentCustomerService.handleSave(assignmentCustomerEntity);
+//                }
+//
+//            }
+//
+//            for ( Long  id :  uncheck  ){
+//                UserEntity userEntity = this.userService.getUserById(id);
+//                if ( staffs.contains(userEntity)) {
+//
+//                    this.assignmentCustomerService.handleDelete( userEntity , customerEntity);
+//                }
+//            }
+//        }else {
+//            List<Long>  AllStaff = new ArrayList<>();
+//            for ( UserEntity sf : allStaffs ){
+//                AllStaff.add(sf.getId());
+//            }
+//            for ( Long  id :  AllStaff  ){
+//                UserEntity userEntity = this.userService.getUserById(id);
+//                if ( staffs.contains(userEntity)) {
+//
+//                    this.assignmentCustomerService.handleDelete( userEntity , customerEntity);
+//                }
+//            }
+//        }
     }
 
 
