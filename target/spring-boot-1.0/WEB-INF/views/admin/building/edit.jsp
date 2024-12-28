@@ -5,7 +5,8 @@
   Time: 4:30 PM
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@include file="/common/taglib.jsp" %>
 <html>
 <head>
@@ -46,15 +47,25 @@
 
             <!--Begin form-->
             <div class="row " style="font-family: 'Times New Roman', Times, serif;">
-                <form:form modelAttribute="buildingModel"  id="form-edit" method="GET" >
+                <form:form modelAttribute="buildingModel"  action="/admin/building-edit" id="form-edit" method="POST" enctype="multipart/form-data">
                     <form class="form-horizontal" role="form" style="margin-bottom: 40px;">
 
                         <div class="col-xs-12">
+                            <c:if test="${not empty errorSQL}">
+                                <div class="alert alert-danger">${errorSQL}</div>
+                            </c:if>
+
                             <div class=" row form-group ">
                                 <label class="col-sm-3">Tên tòa nhà</label>
                                 <div class="col-sm-9 ">
-                                    <form:input type="text" class="form-control" id="name" path="name"/>
+                                    <c:set var="errorName">
+                                        <form:errors path="name" cssClass="text-danger" />
+                                    </c:set>
+
+                                    <form:input type="text"  class="form-control" id="name" path="name" style="${not empty errorName ? 'border: 1px solid red;' : ''}" />
+                                        ${errorName}
                                 </div>
+
 
                             </div>
 
@@ -63,11 +74,15 @@
                             <div class=" row form-group ">
                                 <label class="col-sm-3">Quận</label>
                                 <div class="col-sm-3 ">
-                                    <form:select class=" form-control" id="district" path="district"
-                                                 placeholder="--Chọn quận-- ">
+                                    <c:set var="errorDistrict">
+                                        <form:errors path="district" cssClass="text-danger" />
+                                    </c:set>
+                                    <form:select class=" form-control" id="district" path="district" style="${not empty errorDistrict ? 'border: 1px solid red;' : ''}"
+                                                 placeholder="--Chọn quận-- " >
                                         <form:option value="">--Chọn quận-- </form:option>
                                         <form:options items="${typeDistrict}" />
                                     </form:select>
+                                        ${errorName}
                                 </div>
 
 
@@ -78,7 +93,11 @@
                             <div class=" row form-group ">
                                 <label class="col-sm-3">Phường</label>
                                 <div class="col-sm-9 ">
-                                    <form:input type="text" id="ward" path="ward" class="form-control"/>
+                                    <c:set var="errorWard">
+                                        <form:errors path="ward" cssClass="text-danger" />
+                                    </c:set>
+                                    <form:input type="text" style="${not empty errorWard ? 'border: 1px solid red;' : ''}" id="ward" path="ward" class="form-control"/>
+                                        ${errorWard}
                                 </div>
 
                             </div>
@@ -88,7 +107,11 @@
                             <div class=" row form-group ">
                                 <label class="col-sm-3">Đường</label>
                                 <div class="col-sm-9 ">
-                                    <form:input type="text" id="street" path="street"  class="form-control"/>
+                                    <c:set var="errorStreet">
+                                        <form:errors path="street" cssClass="text-danger" />
+                                    </c:set>
+                                    <form:input type="text" id="street" path="street"  class="form-control" style="${not empty errorName ? 'border: 1px solid red;' : ''}"/>
+                                     ${errorStreet}
                                 </div>
 
                             </div>
@@ -108,8 +131,12 @@
                             <div class=" row form-group ">
                                 <label class="col-sm-3">Số tầng hầm</label>
                                 <div class="col-sm-9 ">
-                                    <form:input type="number" id="numberOfBasement" path="numberOfBasement"
+                                    <c:set var="errorNumberOfBasement">
+                                        <form:errors path="numberOfBasement" cssClass="text-danger" />
+                                    </c:set>
+                                    <form:input type="number" style="${not empty errorNumberOfBasement ? 'border: 1px solid red;' : ''}" id="numberOfBasement" path="numberOfBasement"
                                            class="form-control"/>
+                                        ${errorNumberOfBasement}
                                 </div>
 
                             </div>
@@ -119,8 +146,13 @@
                             <div class=" row form-group ">
                                 <label class="col-sm-3">Diện tích sàn</label>
                                 <div class="col-sm-9 ">
+                                    <c:set var="errorFloorArea">
+                                        <form:errors path="floorArea" cssClass="text-danger" />
+                                    </c:set>
                                     <form:input type="number" id="floorArea" path="floorArea"
+                                                style="${not empty errorFloorArea ? 'border: 1px solid red;' : ''}"
                                            class="form-control"/>
+                                        ${errorFloorArea}
                                 </div>
 
                             </div>
@@ -149,8 +181,15 @@
                         <div class="col-xs-12">
                             <div class=" row form-group ">
                                 <label class="col-sm-3">Diện tích thuê</label>
+
                                 <div class="col-sm-9 ">
-                                    <form:input type="text" id="rentArea" path="rentArea" class="form-control"/>
+                                    <c:set var="errorRentArea">
+                                        <form:errors path="rentArea" cssClass="text-danger" />
+                                    </c:set>
+                                    <form:input type="text" id="rentArea" path="rentArea"
+                                                style="${not empty errorRentArea ? 'border: 1px solid red;' : ''}"
+                                                class="form-control"/>
+                                        ${errorFloorArea}
                                 </div>
 
                             </div>
@@ -272,7 +311,11 @@
                             <div class=" row form-group ">
                                 <label class="col-sm-3">Tên quản lí</label>
                                 <div class="col-sm-9 ">
-                                    <form:input type="text" id="managerName" path="managerName" class="form-control"/>
+                                    <c:set var="errorManagerName">
+                                        <form:errors path="managerPhone" cssClass="text-danger" />
+                                    </c:set>
+                                    <form:input type="text" id="managerName" path="managerName" class="form-control"  style="${not empty errorManagerName ? 'border: 1px solid red;' : ''}"/>
+                                    ${errorManagerName}
                                 </div>
 
                             </div>
@@ -282,7 +325,13 @@
                             <div class=" row form-group ">
                                 <label class="col-sm-3">SĐT quản lí</label>
                                 <div class="col-sm-9 ">
-                                    <form:input type="text" id="managerPhone" path="managerPhone" class="form-control"/>
+                                    <c:set var="errorManagerPhone">
+                                        <form:errors path="managerPhone" cssClass="text-danger" />
+                                    </c:set>
+                                    <form:input type="text" id="managerPhone" path="managerPhone" class="form-control"
+                                                style="${not empty errorManagerPhone ? 'border: 1px solid red;' : ''}"
+                                        />
+                                        ${errorManagerPhone}
                                 </div>
 
                             </div>
@@ -302,8 +351,11 @@
                             <div class=" row form-group ">
                                 <label class="col-sm-3">Loại tòa nhà</label>
                                 <div class="col-sm-9 ">
-                                    <form:checkboxes items="${rentCode}" path="typeCode"  />
-
+                                    <c:set var="errorTypeCode">
+                                        <form:errors path="typeCode" cssClass="text-danger" />
+                                    </c:set>
+                                    <form:checkboxes items="${rentCode}" path="typeCode" style="${not empty errorTypeCode ? 'border: 1px solid red;' : ''}"  />
+                                    ${errorTypeCode}
 
 
                                 </div>
@@ -329,7 +381,8 @@
                                            accept=".png, .jpg, .jpeg" name="imageFile">
                                 </div>
                                 <div class="col-sm-3 ">
-                                    <img src="../static/img/loading.gif" style="max-height: 250px;" alt="avatar preview"
+                                    <img src="/ImageMain/building/${buildingModel.imageName}"
+                                             style="max-height: 250px;" alt="avatar preview"
 <%--                                         src="../../../../target/spring-boot-1.0/resources/images/building/${buildingModel.image}"--%>
                                          id="avatarPreview" />
                                 </div>
@@ -345,11 +398,11 @@
                                 <div class="col-sm-9 pull-right">
                                     <c:choose>
                                         <c:when test="${buildingModel.id == null}">
-                                            <button class="btn btn-primary" id="btnAddBuilding" onclick="btnCreate()">Thêm tòa nhà</button>
+                                            <button class="btn btn-primary" id="btnAddBuilding" type="submit" >Thêm tòa nhà</button>
                                             <button class="btn btn-primary" id="btnCancel">Hủy thao tác</button>
                                         </c:when>
                                         <c:when test="${buildingModel.id != null}">
-                                            <button class="btn btn-info" id="btnAddBuilding" onclick="btnUpdate()">Cập nhật tòa nhà</button>
+                                            <button class="btn btn-info" id="btnAddBuilding" type="submit" >Cập nhật tòa nhà</button>
                                             <button class="btn btn-info" id="btnCancel">Hủy thao tác</button>
                                         </c:when>
 
@@ -392,39 +445,34 @@
         });
     });
 
-    function btnCreate() {
-        var data = {};
-        var typeCode = [];
-
-        $('#form-edit').serializeArray().forEach(function (item) {
-            if (item.name !== 'typeCode') {
-                data[item.name] = item.value;
-            } else {
-                typeCode.push(item.value);
-            }
-        });
-
-        data['typeCode'] = typeCode;
-        var imageFile = $('#avatarFile')[0].files[0];
-
-        var formData = new FormData();
-        formData.append('buildingDTO', new Blob([JSON.stringify(data)], { type: 'application/json' }));
-        formData.append('imageFile', imageFile);
-
-        $.ajax({
-            type: "PUT",
-            url: "http://localhost:8081/api/building/create",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                console.log("success");
-            },
-            error: function (response) {
-                console.log("error");
-            }
-        });
-    }
+    // function btnCreate() {
+    //     var data = {};
+    //     var typeCode = [];
+    //
+    //     $('#form-edit').serializeArray().forEach(function (item) {
+    //         if (item.name !== 'typeCode') {
+    //             data[item.name] = item.value;
+    //         } else {
+    //             typeCode.push(item.value);
+    //         }
+    //     });
+    //
+    //     data['typeCode'] = typeCode;
+    //     var imageFile = $('#avatarFile')[0].files[0];
+    //
+    //     var formData = new FormData();
+    //     formData.append('buildingDTO', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+    //     formData.append('imageFile', imageFile);
+    //
+    //     $.ajax({
+    //         type: "PUT",
+    //         url: "http://localhost:8081/api/building/create",
+    //         data: formData,
+    //         processData: false,
+    //         contentType: false,
+    //
+    //     });
+    // }
 
 
     $('#btnCancel').click(function (e){
@@ -432,36 +480,36 @@
 
     })
 
-    function btnUpdate(){
-
-        var data = {}
-        var typeCode = []
-        var formFields  = $('#form-edit').serializeArray();
-        $.each(formFields , function (i, v) {
-            if (v.name !== 'typeCode') {
-                data["" + v.name + ""] = v.value;
-            } else {
-                typeCode.push(v.value);
-            }
-
-        });
-        data['typeCode'] = typeCode;
-
-
-        $.ajax({
-            type: "PUT",
-            url: "http://localhost:8081/api/building/update",
-            data: JSON.stringify(data),
-            contentType: "application/json",
-            dataType: "JSON",
-            success: function (respond) {
-                console.log(respond)
-            },
-            error: function (respond) {
-                console.log(respond)
-            }
-        });
-    }
+    // function btnUpdate(){
+    //
+    //     var data = {}
+    //     var typeCode = []
+    //     var formFields  = $('#form-edit').serializeArray();
+    //     $.each(formFields , function (i, v) {
+    //         if (v.name !== 'typeCode') {
+    //             data["" + v.name + ""] = v.value;
+    //         } else {
+    //             typeCode.push(v.value);
+    //         }
+    //
+    //     });
+    //     data['typeCode'] = typeCode;
+    //
+    //
+    //     $.ajax({
+    //         type: "PUT",
+    //         url: "http://localhost:8081/api/building/update",
+    //         data: JSON.stringify(data),
+    //         contentType: "application/json",
+    //         dataType: "JSON",
+    //         success: function (respond) {
+    //             console.log(respond)
+    //         },
+    //         error: function (respond) {
+    //             console.log(respond)
+    //         }
+    //     });
+    // }
 
 
 

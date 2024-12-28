@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface RentAreaRepositoryCustom {
     void handleSaveRentArea (List<String> newValue , BuildingEntity CurrentBuildingEntity);
+    String getValueRentArea ( BuildingEntity buildingEntity);
 }

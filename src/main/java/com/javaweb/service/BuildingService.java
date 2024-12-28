@@ -6,6 +6,7 @@ import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.response.BuildingSearchResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,10 +18,10 @@ public interface BuildingService {
 
     BuildingEntity findById ( Long id);
 
-    @Transactional
+
     void deleteBuilding( Long id);
 
-    void createBuilding (BuildingDTO buildingDTO , String avatar);
+    ResponseEntity<String> createBuilding (BuildingDTO buildingDTO , MultipartFile file);
 
     void updateBuilding ( BuildingDTO buildingDTO);
 

@@ -46,7 +46,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                         .antMatchers("/admin/building-edit").hasRole("MANAGER")
                         .antMatchers("/admin/**").hasAnyRole("MANAGER","STAFF","ADMIN")
-                        .antMatchers("/login","/register", "/resource/**", "/trang-chu", "/api/**").permitAll()
+                        // cái / này á là bên fontend nó sẽ truy cập tới css để lấy css ra thì nó sẽ /admin/building-edit/css nếu mà không có cái trên á thì css sẽ không được lấy ra
+                        // nó phụ thuộc vào API nha những cái API nào mà chưa setting là SpringSecurity nó không cho lấy tài nguyen ra đâu , lúc get hay post nó ko có CSS đâu
+                        .antMatchers("/login","/register", "/resource/**", "/trang-chu", "/api/**" ).permitAll()
                 .and()
                 .formLogin().loginPage("/login").usernameParameter("j_username").passwordParameter("j_password").permitAll()
                 .loginProcessingUrl("/j_spring_security_check")

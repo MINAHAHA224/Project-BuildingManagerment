@@ -4,6 +4,8 @@ package com.javaweb.api.admin;
 import com.javaweb.entity.AssignmentBuildingEntity;
 import com.javaweb.entity.BuildingEntity;
 import com.javaweb.entity.UserEntity;
+import com.javaweb.enums.BuildingType;
+import com.javaweb.enums.DistrictCode;
 import com.javaweb.model.dto.AssignmentBuildingDTO;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.response.ResponseDTO;
@@ -13,11 +15,17 @@ import com.javaweb.service.BuildingService;
 import com.javaweb.service.UserService;
 import com.javaweb.utils.HandleUploadFile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 
@@ -151,12 +159,44 @@ public class BuildingAPI {
        }
     }
 
-    @PutMapping("/api/building/create")
-    public void getCreateBuilding(@RequestPart("buildingDTO") BuildingDTO buildingDTO ,@RequestPart("imageFile") MultipartFile file  ){
+    @PostMapping ("/admin/building-edit")
+    public ModelAndView getCreateBuilding(@Valid @ModelAttribute("buildingModel") BuildingDTO buildingDTO , BindingResult bindingResult, @RequestPart("imageFile") MultipartFile file  ){
+        if ( buildingDTO.getId() != null){
+            this.buildingService.updateBuilding(buildingDTO);
+        }
+        else {
+            ModelAndView mav = new ModelAndView("admin/building/edit");
+            mav.addObject("buildingModel",buildingDTO);
+            Map<String , String > districtCodes = DistrictCode.code();
+            Map<String,String> rentCode = BuildingType.type();
 
-        String avatar = this.handleUploadFile.toHandleUploadFile(file , "building");
+            mav.addObject("typeDistrict" ,districtCodes );
+            mav.addObject("rentCode" ,rentCode );
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            for (FieldError error : errors) {
+                System.out.println(">>>>" + error.getField() + " - " + error.getDefaultMessage());
+            }
 
-        this.buildingService.createBuilding(buildingDTO , avatar);
+            if (bindingResult.hasErrors()) {
+                return mav;
+            }
+
+            // nếu thành công thì redirect
+
+            ResponseEntity<String> rsBuidling =  this.buildingService.createBuilding(buildingDTO , file);
+            if (rsBuidling.getStatusCodeValue()  == 200 ){
+                return new  ModelAndView("redirect:/admin/building-list");
+            }else {
+                // hướng chỗ này là lấy cái nội dung lỗi từ thằng SQL ra rồi add vô BidingResult ,roioif qua fontend sử lý tiêp cái lỗi này
+                // không sử dụng Form:erros và cái path được mà sài thẳng ${}
+                // Hướng là truyền thêm 1 cái ModelAttribute riêng về suwr lí lỗi SQL , thì bên fontend check nếu cócaisi modedatribule đó . đến cái lỗi đó có thì show ra 1 cái div nữa
+                String errorSQL = rsBuidling.getBody();
+                mav.addObject("errorSQL" ,errorSQL );
+                return mav;
+            }
+
+        }
+       return null;
     }
 
     @PutMapping("/api/building/update")

@@ -10,15 +10,39 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class RentareaRepositoryImpl implements RentAreaRepositoryCustom {
 
+    @PersistenceContext
+   private  EntityManager entityManager;
 
     @Override
     public void handleSaveRentArea(List<String> newValue, BuildingEntity CurrentBuildingEntity) {
 
+    }
+
+    @Override
+    public String getValueRentArea(BuildingEntity buildingEntity) {
+        String sql = "SELECT rentarea.value FROM rentarea WHERE rentarea.buildingid ='" +buildingEntity.getId()+"'";
+        Query rs = entityManager.createNativeQuery(sql.toString());
+        List<Object> rentAreaValues  = rs.getResultList();
+        String rentAreaValue = "";
+        if(rentAreaValues.size() > 1) {
+            rentAreaValue = rentAreaValues.stream().map(it -> String.valueOf(it)).collect(Collectors.joining(","));
+        }else {
+            for ( Object value  :rentAreaValues  ){
+                rentAreaValue = String.valueOf(value);
+            }
+        }
+
+        return rentAreaValue;
     }
 }

@@ -1,19 +1,23 @@
 package com.javaweb.service.impl;
 
 import com.javaweb.builder.BuildingSearchBuilder;
+import com.javaweb.constant.SystemConstant;
 import com.javaweb.converter.BuildingEntityToBuildingSearchResponse;
 import com.javaweb.entity.BuildingEntity;
 import com.javaweb.entity.RentareaEntity;
+import com.javaweb.exception.MyException;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.response.BuildingSearchResponse;
 import com.javaweb.repository.BuildingRepository;
 import com.javaweb.repository.RentareaRepository;
 import com.javaweb.service.BuildingService;
+import com.javaweb.utils.HandleUploadFile;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,6 +51,9 @@ public class BuildingServiceImpl implements BuildingService {
     @Autowired
     private RentareaRepository rentareaRepository;
 
+    @Autowired
+    private HandleUploadFile handleUploadFile;
+
     @Override
     public Page<BuildingSearchResponse> getBuildingSearch(BuildingSearchBuilder buildingSearchBuilder, Pageable pageable ) {
         Page<BuildingEntity> buildingEntities = this.buildingRepository.findAll(buildingSearchBuilder , pageable );
@@ -75,22 +82,37 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public void createBuilding(BuildingDTO buildingDTO , String avatar) {
-        BuildingEntity buildingEntity = new BuildingEntity();
-        buildingEntity = this.modelMapper.map(buildingDTO ,BuildingEntity.class);
-        String type = buildingDTO.getTypeCode().stream().map(it ->  it ).collect(Collectors.joining(","));
-        buildingEntity.setType(type);
-        buildingEntity.setAvatar(avatar);
-        BuildingEntity building = this.buildingRepository.save(buildingEntity);
+    @Transactional
+    public ResponseEntity<String> createBuilding(BuildingDTO buildingDTO , MultipartFile file) {
+        try {
+            BuildingEntity buildingEntity = new BuildingEntity();
+            buildingEntity = this.modelMapper.map(buildingDTO ,BuildingEntity.class);
+            String type = buildingDTO.getTypeCode().stream().map(it ->  it ).collect(Collectors.joining(","));
+            buildingEntity.setType(type);
+            String avatar = this.handleUploadFile.toHandleUploadFile(file , "building");
+            buildingDTO.setImageName(avatar);
+            buildingEntity.setAvatar(buildingDTO.getImageName());
+            BuildingEntity building = this.buildingRepository.save(buildingEntity);
+            // save rentArea
 
-        // update thi phai save theo id cu ( vi truong hop lỡ thằng id cũ nó sửa ) còn Create thì cứ
-        // buộc phải có id trước vì lúc DTO gửi về ko có id
-        List<String> rentAreaValues = Arrays.asList(buildingDTO.getRentArea().split(","));
-        for ( String rentAreaValue : rentAreaValues ){
-            RentareaEntity rentareaEntity = new RentareaEntity();
-            rentareaEntity.setValue(Long.valueOf(rentAreaValue));
-            rentareaEntity.setBuildingId(building);
-            this.rentareaRepository.save(rentareaEntity);
+                List<String> rentAreaValues = Arrays.asList(buildingDTO.getRentArea().split(","));
+                for ( String rentAreaValue : rentAreaValues ){
+                    try {
+                        RentareaEntity rentareaEntity = new RentareaEntity();
+                        rentareaEntity.setValue(Long.valueOf(rentAreaValue));
+                        rentareaEntity.setBuildingId(building);
+                        this.rentareaRepository.save(rentareaEntity);
+                    } catch (MyException e) {
+                        System.out.println("--ER :Lỗi khi lưu giá trị thuê " + e.getMessage());
+                        throw new MyException("Lỗi khi lưu giá trị thuê: " + e.getMessage());
+                    }
+                }
+
+            return ResponseEntity.ok().body("Tạo mới Building thành công !!!");
+        }  catch (MyException e) {
+            // Trường hợp lỗi chung khác
+            System.out.println("--ER :Có lỗi xảy ra khi tạo Building hoặc RentArea " + e.getMessage());
+            return ResponseEntity.badRequest().body("Có lỗi xảy ra khi tạo Building hoặc RentArea");
         }
     }
 

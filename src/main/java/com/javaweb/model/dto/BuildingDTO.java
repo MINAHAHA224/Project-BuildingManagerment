@@ -1,11 +1,12 @@
 package com.javaweb.model.dto;
 
+import com.javaweb.service.validator.building.BuildingChecked;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@BuildingChecked
 public class BuildingDTO extends AbstractDTO{
     private Long id;
     private String name;

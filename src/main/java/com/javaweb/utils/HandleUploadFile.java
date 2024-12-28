@@ -1,5 +1,6 @@
 package com.javaweb.utils;
 
+import com.javaweb.constant.SystemConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,6 +10,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 
 @Component
 public class HandleUploadFile {
@@ -16,20 +18,33 @@ public class HandleUploadFile {
     @Autowired
     private ServletContext   servletContext;
     public String toHandleUploadFile(MultipartFile file, String targetFolder) {
-        if (file.isEmpty()) {
-            return "";
-        }
-        String rootPath = this.servletContext.getRealPath("/resources/images");
+
+        String defaultImageHomePath  = servletContext.getInitParameter("PathSaveImage") + "/HouseDefault.jpg";
+        String rootPath = servletContext.getInitParameter("PathSaveImage");
         String finalName = "";
+        byte[] bytes;
+
+
         try {
-            byte[] bytes;
-            bytes = file.getBytes();
-            String ahihi = rootPath + File.separator + targetFolder;
+            if ( file == null || file.isEmpty()){
+                File imageHouseDefault =  new File(defaultImageHomePath);
+                boolean check = imageHouseDefault.exists();
+                if (!imageHouseDefault.exists()){
+                    return  "";
+                }
+                bytes = Files.readAllBytes(imageHouseDefault.toPath());
+
+            }else {
+                bytes = file.getBytes();
+            }
+
+
+            String testRootPath = rootPath + File.separator + targetFolder;
             File dir = new File(rootPath + File.separator + targetFolder);
             if (!dir.exists())
                 dir.mkdirs();
             // Create the file on server
-            finalName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
+            finalName = System.currentTimeMillis() + "-" + (file!=null && !file.isEmpty() ? file.getOriginalFilename() : "HouseDefault.jpg");
 
             File serverFile = new File(dir.getAbsolutePath() + File.separator + finalName);
 
