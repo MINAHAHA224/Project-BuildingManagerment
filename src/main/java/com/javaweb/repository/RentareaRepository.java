@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface RentareaRepository extends JpaRepository<RentareaEntity, Long> , RentAreaRepositoryCustom {
 
+
 }

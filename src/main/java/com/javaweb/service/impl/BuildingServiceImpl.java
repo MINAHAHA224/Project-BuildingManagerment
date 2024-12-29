@@ -117,26 +117,38 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public void updateBuilding(BuildingDTO buildingDTO) {
+    @Transactional
+    public ResponseEntity<String> updateBuilding(BuildingDTO buildingDTO , MultipartFile file) {
+        try {
+            BuildingEntity CurrentBuildingEntity = this.buildingRepository.findById(buildingDTO.getId()).get();
+            BuildingEntity UpdateBuildingEntity = this.modelMapper.map(buildingDTO ,BuildingEntity.class);
+            String type = buildingDTO.getTypeCode().stream().map(it ->  it ).collect(Collectors.joining(","));
+            UpdateBuildingEntity.setType(type);
+            // handle delete rentArea
+            this.rentareaRepository.handleDeleteRentarea(buildingDTO.getId());
+            // handle save rentAreaValue
+            List<String> rentAreaValues = Arrays.asList(buildingDTO.getRentArea().split(","));
+            List<RentareaEntity> rentareaEntities = new ArrayList<>();
+            for ( String rentAreaValue : rentAreaValues ){
+                RentareaEntity rentareaEntity = new RentareaEntity();
+                rentareaEntity.setValue(Long.valueOf(rentAreaValue));
+                rentareaEntity.setBuildingId(CurrentBuildingEntity);
+                rentareaEntities.add(rentareaEntity);
+                this.rentareaRepository.save(rentareaEntity);
+            }
 
-        BuildingEntity CurrentBuildingEntity = this.buildingRepository.findById(buildingDTO.getId()).get();
-        BuildingEntity UpdateBuildingEntity = this.modelMapper.map(buildingDTO ,BuildingEntity.class);
-        String type = buildingDTO.getTypeCode().stream().map(it ->  it ).collect(Collectors.joining(","));
-        UpdateBuildingEntity.setType(type);
-        // handle save rentAreaValue
-        List<String> rentAreaValues = Arrays.asList(buildingDTO.getRentArea().split(","));
-        List<RentareaEntity> rentareaEntities = new ArrayList<>();
-        for ( String rentAreaValue : rentAreaValues ){
-            RentareaEntity rentareaEntity = new RentareaEntity();
-            rentareaEntity.setValue(Long.valueOf(rentAreaValue));
-            rentareaEntity.setBuildingId(CurrentBuildingEntity);
-            rentareaEntities.add(rentareaEntity);
-            this.rentareaRepository.save(rentareaEntity);
+            // handleSaveImage
+            String avatar =  this.handleUploadFile.toHandleUploadFile(file , "building");
+            UpdateBuildingEntity.setAvatar(avatar);
+            // final save UpdateBuildingEntity
+            this.buildingRepository.save(UpdateBuildingEntity);
+            return ResponseEntity.ok().body("Cập nhật thành công");
+        }catch( RuntimeException e){
+            System.out.println("--ER : có lỗi cập nhật tòa nhà " + e.getMessage());
+            return ResponseEntity.badRequest().body("Lỗi cập nhật Building !!!");
         }
-        UpdateBuildingEntity.setRentValue(rentareaEntities);
 
-        // final save UpdateBuildingEntity
-        this.buildingRepository.save(UpdateBuildingEntity);
+
     }
 
 

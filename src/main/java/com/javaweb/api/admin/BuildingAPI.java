@@ -161,46 +161,55 @@ public class BuildingAPI {
 
     @PostMapping ("/admin/building-edit")
     public ModelAndView getCreateBuilding(@Valid @ModelAttribute("buildingModel") BuildingDTO buildingDTO , BindingResult bindingResult, @RequestPart("imageFile") MultipartFile file  ){
-        if ( buildingDTO.getId() != null){
-            this.buildingService.updateBuilding(buildingDTO);
+        ModelAndView mav = new ModelAndView("admin/building/edit");
+        mav.addObject("buildingModel",buildingDTO);
+        Map<String , String > districtCodes = DistrictCode.code();
+        Map<String,String> rentCode = BuildingType.type();
+
+        mav.addObject("typeDistrict" ,districtCodes );
+        mav.addObject("rentCode" ,rentCode );
+        List<FieldError> errors = bindingResult.getFieldErrors();
+        for (FieldError error : errors) {
+            System.out.println(">>>>" + error.getField() + " - " + error.getDefaultMessage());
         }
-        else {
-            ModelAndView mav = new ModelAndView("admin/building/edit");
-            mav.addObject("buildingModel",buildingDTO);
-            Map<String , String > districtCodes = DistrictCode.code();
-            Map<String,String> rentCode = BuildingType.type();
 
-            mav.addObject("typeDistrict" ,districtCodes );
-            mav.addObject("rentCode" ,rentCode );
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            for (FieldError error : errors) {
-                System.out.println(">>>>" + error.getField() + " - " + error.getDefaultMessage());
-            }
-
-            if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
+            return mav;
+        }
+        // update
+        if ( buildingDTO.getId() != null){
+            ResponseEntity<String> rsUpdateBuidling =  this.buildingService.updateBuilding(buildingDTO,file);
+            if ( rsUpdateBuidling.getStatusCodeValue() == 200 ){
+                return new  ModelAndView("redirect:/admin/building-list");
+            }else {
+                String errorSQL = rsUpdateBuidling.getBody();
+                mav.addObject("errorSQL" ,errorSQL );
                 return mav;
             }
+        }
+        // create
+        else {
 
             // nếu thành công thì redirect
 
-            ResponseEntity<String> rsBuidling =  this.buildingService.createBuilding(buildingDTO , file);
-            if (rsBuidling.getStatusCodeValue()  == 200 ){
+            ResponseEntity<String> rsCreateBuidling =  this.buildingService.createBuilding(buildingDTO , file);
+            if (rsCreateBuidling.getStatusCodeValue()  == 200 ){
                 return new  ModelAndView("redirect:/admin/building-list");
             }else {
                 // hướng chỗ này là lấy cái nội dung lỗi từ thằng SQL ra rồi add vô BidingResult ,roioif qua fontend sử lý tiêp cái lỗi này
                 // không sử dụng Form:erros và cái path được mà sài thẳng ${}
                 // Hướng là truyền thêm 1 cái ModelAttribute riêng về suwr lí lỗi SQL , thì bên fontend check nếu cócaisi modedatribule đó . đến cái lỗi đó có thì show ra 1 cái div nữa
-                String errorSQL = rsBuidling.getBody();
+                String errorSQL = rsCreateBuidling.getBody();
                 mav.addObject("errorSQL" ,errorSQL );
                 return mav;
             }
 
         }
-       return null;
+//       return null;
     }
 
-    @PutMapping("/api/building/update")
-    public  void getUpdateBuilding (@RequestBody BuildingDTO buildingDTO){
-        this.buildingService.updateBuilding(buildingDTO);
-    }
+//    @PutMapping("/api/building/update")
+//    public  void getUpdateBuilding (@RequestBody BuildingDTO buildingDTO){
+//        this.buildingService.updateBuilding(buildingDTO);
+//    }
 }

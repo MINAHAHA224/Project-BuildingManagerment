@@ -23,7 +23,7 @@ public interface BuildingService {
 
     ResponseEntity<String> createBuilding (BuildingDTO buildingDTO , MultipartFile file);
 
-    void updateBuilding ( BuildingDTO buildingDTO);
+    ResponseEntity<String> updateBuilding ( BuildingDTO buildingDTO , MultipartFile file);
 
 
 }

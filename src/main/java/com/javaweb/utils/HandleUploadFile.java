@@ -20,22 +20,31 @@ public class HandleUploadFile {
     public String toHandleUploadFile(MultipartFile file, String targetFolder) {
 
         String defaultImageHomePath  = servletContext.getInitParameter("PathSaveImage") + "/HouseDefault.jpg";
+        String defaultImagePathCheck = servletContext.getInitParameter("PathSaveImage") + "/";
+        String currentImageCheck =  servletContext.getInitParameter("PathSaveImage") + "/" +targetFolder +"/"+ file.getOriginalFilename();
         String rootPath = servletContext.getInitParameter("PathSaveImage");
         String finalName = "";
         byte[] bytes;
-
-
         try {
-            if ( file == null || file.isEmpty()){
+         //   if ( file ==  null || file.isEmpty() )
+            if ( file.getOriginalFilename().isEmpty()){
                 File imageHouseDefault =  new File(defaultImageHomePath);
-                boolean check = imageHouseDefault.exists();
                 if (!imageHouseDefault.exists()){
                     return  "";
                 }
                 bytes = Files.readAllBytes(imageHouseDefault.toPath());
 
             }else {
-                bytes = file.getBytes();
+                File imageCheck =  new File(currentImageCheck);
+                if (imageCheck.exists()){
+
+                    return  file.getOriginalFilename();
+
+                }else {
+
+                    bytes = file.getBytes();
+                }
+
             }
 
 
@@ -44,8 +53,10 @@ public class HandleUploadFile {
             if (!dir.exists())
                 dir.mkdirs();
             // Create the file on server
-            finalName = System.currentTimeMillis() + "-" + (file!=null && !file.isEmpty() ? file.getOriginalFilename() : "HouseDefault.jpg");
 
+
+          //  finalName = System.currentTimeMillis() + "-" + (file!=null && !file.isEmpty() ? file.getOriginalFilename() : "HouseDefault.jpg");
+            finalName = System.currentTimeMillis() + "-" + (!file.getOriginalFilename().isEmpty()? file.getOriginalFilename() : "HouseDefault.jpg");
             File serverFile = new File(dir.getAbsolutePath() + File.separator + finalName);
 
 

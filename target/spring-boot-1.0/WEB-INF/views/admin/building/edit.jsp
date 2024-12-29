@@ -189,7 +189,7 @@
                                     <form:input type="text" id="rentArea" path="rentArea"
                                                 style="${not empty errorRentArea ? 'border: 1px solid red;' : ''}"
                                                 class="form-control"/>
-                                        ${errorFloorArea}
+                                        ${errorRentArea}
                                 </div>
 
                             </div>
@@ -378,12 +378,12 @@
                                 <label class="col-sm-3">Avatar</label>
                                 <div class="col-sm-3 ">
                                     <input  type="file" id="avatarFile"
-                                           accept=".png, .jpg, .jpeg" name="imageFile">
+                                           accept=".png, .jpg, .jpeg" name="imageFile" >
                                 </div>
                                 <div class="col-sm-3 ">
                                     <img src="/ImageMain/building/${buildingModel.imageName}"
                                              style="max-height: 250px;" alt="avatar preview"
-<%--                                         src="../../../../target/spring-boot-1.0/resources/images/building/${buildingModel.image}"--%>
+
                                          id="avatarPreview" />
                                 </div>
 
@@ -436,14 +436,104 @@
 </div>
 <script>
     //upload image
+    // $(document).ready(() => {
+    //     const avatarFile = $("#avatarFile");
+    //     avatarFile.change(function (e) {
+    //         const imgURL = URL.createObjectURL(e.target.files[0]);
+    //         $("#avatarPreview").attr("src", imgURL);
+    //         $("#avatarPreview").css({ "display": "block" });
+    //     });
+    // });
+    // $(document).ready(() => {
+    //     const avatarPreview = $("#avatarPreview");
+    //     const avatarFile = $("#avatarFile");
+    //
+    //     // Tải file từ src và gán vào input file
+    //     const loadFileFromSrc = async (imgSrc) => {
+    //         if (imgSrc) {
+    //             const response = await fetch(imgSrc); // Tải file từ URL
+    //             const blob = await response.blob(); // Chuyển thành Blob
+    //             const file = new File([blob], imgSrc.split("/").pop(), { type: blob.type });
+    //
+    //             // Gán file vào input
+    //             const dataTransfer = new DataTransfer();
+    //             dataTransfer.items.add(file);
+    //             avatarFile[0].files = dataTransfer.files;
+    //
+    //             console.log("Tệp đã được gán:", file.name);
+    //         }
+    //     };
+    //
+    //     // Theo dõi thay đổi src
+    //     const observer = new MutationObserver(() => {
+    //         const imgSrc = avatarPreview.attr("src");
+    //         loadFileFromSrc(imgSrc); // Gọi tải file
+    //     });
+    //     observer.observe(avatarPreview[0], { attributes: true, attributeFilter: ["src"] });
+    //
+    //     // Gọi hàm ngay lần đầu nếu đã có src
+    //     loadFileFromSrc(avatarPreview.attr("src"));
+    // });
+
     $(document).ready(() => {
         const avatarFile = $("#avatarFile");
+        const avatarPreview = $("#avatarPreview");
+            const loadFileFromSrc = async (imgSrc) => {
+                if (imgSrc) {
+                    const response = await fetch(imgSrc); // Tải file từ URL
+                    const blob = await response.blob(); // Chuyển thành Blob
+                    const file = new File([blob], imgSrc.split("/").pop(), { type: blob.type });
+
+                    // Gán file vào input
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    avatarFile[0].files = dataTransfer.files;
+
+                    console.log("Tệp đã được gán:", file.name);
+                }
+            };
+
+            // Theo dõi thay đổi src
+            // const observer = new MutationObserver(() => {
+            //     const imgSrc = avatarPreview.attr("src");
+            //     loadFileFromSrc(imgSrc); // Gọi tải file
+            // });
+            // observer.observe(avatarPreview[0], { attributes: true, attributeFilter: ["src"] });
+
+            // Gọi hàm ngay lần đầu nếu đã có src
+            loadFileFromSrc(avatarPreview.attr("src"));
+
         avatarFile.change(function (e) {
-            const imgURL = URL.createObjectURL(e.target.files[0]);
-            $("#avatarPreview").attr("src", imgURL);
-            $("#avatarPreview").css({ "display": "block" });
+            const file = e.target.files[0];
+
+            // Kiểm tra nếu không có file
+            if (!file) {
+                alert("Vui lòng chọn tệp!");
+                return;
+            }
+
+            // Kiểm tra định dạng file
+            const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+            if (!allowedTypes.includes(file.type)) {
+                alert("Chỉ cho phép file định dạng .png, .jpg, .jpeg!");
+                avatarFile.val(""); // Xóa giá trị trong input file
+                return;
+            }
+
+            // Kiểm tra kích thước file (giới hạn 2MB)
+            const maxSize = 2 * 1024 * 1024; // 2MB
+            if (file.size > maxSize) {
+                alert("Dung lượng file không được vượt quá 2MB!");
+                avatarFile.val(""); // Xóa giá trị trong input file
+                return;
+            }
+
+            // Hiển thị ảnh preview
+            const imgURL = URL.createObjectURL(file);
+            $("#avatarPreview").attr("src", imgURL).css("display", "block");
         });
     });
+
 
     // function btnCreate() {
     //     var data = {};

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -44,5 +45,19 @@ public class RentareaRepositoryImpl implements RentAreaRepositoryCustom {
         }
 
         return rentAreaValue;
+    }
+
+    @Override
+    @Transactional
+    public void handleDeleteRentarea(Long id) {
+        try {
+            String sql = "DELETE FROM  rentarea WHERE rentarea.buildingid =" +id;
+            Query delete = entityManager.createNativeQuery(sql.toString());
+            delete.executeUpdate();
+        }catch (RuntimeException e){
+            System.out.println("--ER : Lỗi xóa diện tích thuê!!!" + e.getMessage());
+
+        }
+
     }
 }
