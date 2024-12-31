@@ -86,77 +86,97 @@ public class BuildingAPI {
 
         BuildingEntity buildingEntity = this.buildingService.findById(assignmentBuildingDTO.getBuildingId());
 
-
-
-        List<UserEntity> staffs = this.userService.getStaffModels(1 , "STAFF");
-
-        List<Long> checkedList = new ArrayList<>();
-        List<Long> uncheckedList = new ArrayList<>();
-        if (!assignmentBuildingDTO.getStaffs().isEmpty()){
-            List<Long> idStaffs = assignmentBuildingDTO.getStaffs();
-            for (UserEntity id : staffs) {
-                if (idStaffs.contains(id.getId())) {
-                    checkedList.add(id.getId());
-                } else {
-                    uncheckedList.add(id.getId());
-                }
-            }
-
-            List<AssignmentBuildingEntity> assignmentBuildingEntities = this.assignmentBuildingService.getAssignmentBuildingEntity(buildingEntity);
-            List<UserEntity> staffAssignments = new ArrayList<UserEntity>();
-            for ( AssignmentBuildingEntity assignmentBuildingEntity : assignmentBuildingEntities ){
-                staffAssignments.add(assignmentBuildingEntity.getUserEntity());
-            };
-
-            for ( Long id : checkedList ){
+        // handle delete Assignment building
+        ResponseEntity<String> handleDeleteAssignment = this.assignmentBuildingService.deleteAssignmentBuilding(assignmentBuildingDTO.getBuildingId());
+        if ( handleDeleteAssignment.getStatusCodeValue() == 200){
+            // handle save Assignment building
+            for ( Long id  :  assignmentBuildingDTO.getStaffs()){
+                AssignmentBuildingEntity assignmentBuildingEntity = new AssignmentBuildingEntity();
                 UserEntity userEntity = this.userService.getUserById(id);
+                assignmentBuildingEntity.setUserEntity(userEntity);
+                assignmentBuildingEntity.setBuildingEntity(buildingEntity);
 
-                if ( !staffAssignments.contains(userEntity)){
-                    AssignmentBuildingEntity NewAssignmentBuildingEntity = new AssignmentBuildingEntity();
-                    NewAssignmentBuildingEntity.setUserEntity(userEntity);
-                    NewAssignmentBuildingEntity.setBuildingEntity(buildingEntity);
-                    this.assignmentBuildingService.save(NewAssignmentBuildingEntity);
-                }
-            }
-
-            for ( Long id :uncheckedList ){
-                UserEntity userEntity = this.userService.getUserById(id);
-                if ( staffAssignments.contains(userEntity)){
-                    this.assignmentBuildingService.deleteAssignment(userEntity,buildingEntity);
-                }
-            }
-        } else {
-
-            List<AssignmentBuildingEntity> assignmentBuildingEntities = this.assignmentBuildingService.getAssignmentBuildingEntity(buildingEntity);
-            List<UserEntity> staffAssignments = new ArrayList<UserEntity>();
-            for ( AssignmentBuildingEntity assignmentBuildingEntity : assignmentBuildingEntities ){
-                staffAssignments.add(assignmentBuildingEntity.getUserEntity());
-            };
-
-            List<Long>  AllStaff = new ArrayList<>();
-            for ( UserEntity sf : staffs ){
-                AllStaff.add(sf.getId());
-            }
-
-            for ( Long id : AllStaff){
-                UserEntity userEntity = this.userService.getUserById(id);
-                if ( staffAssignments.contains(userEntity)){
-                    this.assignmentBuildingService.deleteAssignment(userEntity,buildingEntity);
-                }
+              ResponseEntity<String> handleSaveAssignmentBuilding =  this.assignmentBuildingService.handleSaveAssignmentBuilding(assignmentBuildingEntity);
+              if (handleSaveAssignmentBuilding.getStatusCodeValue() != 200 ){
+                  System.out.println("--ER : Lỗi save assignment id staff : " + id);
+                  break;
+              }
             }
         }
 
-        List<AssignmentBuildingEntity> assignmentBuildingEntitiesFinal = this.assignmentBuildingService.getAssignmentBuildingEntity(buildingEntity);
-        System.out.println("ok");
+
+//        List<UserEntity> staffs = this.userService.getStaffModels(1 , "STAFF");
+//
+//        List<Long> checkedList = new ArrayList<>();
+//        List<Long> uncheckedList = new ArrayList<>();
+//        if (!assignmentBuildingDTO.getStaffs().isEmpty()){
+//            List<Long> idStaffs = assignmentBuildingDTO.getStaffs();
+//            for (UserEntity id : staffs) {
+//                if (idStaffs.contains(id.getId())) {
+//                    checkedList.add(id.getId());
+//                } else {
+//                    uncheckedList.add(id.getId());
+//                }
+//            }
+//
+//            List<AssignmentBuildingEntity> assignmentBuildingEntities = this.assignmentBuildingService.getAssignmentBuildingEntity(buildingEntity);
+//            List<UserEntity> staffAssignments = new ArrayList<UserEntity>();
+//            for ( AssignmentBuildingEntity assignmentBuildingEntity : assignmentBuildingEntities ){
+//                staffAssignments.add(assignmentBuildingEntity.getUserEntity());
+//            };
+//
+//            for ( Long id : checkedList ){
+//                UserEntity userEntity = this.userService.getUserById(id);
+//
+//                if ( !staffAssignments.contains(userEntity)){
+//                    AssignmentBuildingEntity NewAssignmentBuildingEntity = new AssignmentBuildingEntity();
+//                    NewAssignmentBuildingEntity.setUserEntity(userEntity);
+//                    NewAssignmentBuildingEntity.setBuildingEntity(buildingEntity);
+//                    this.assignmentBuildingService.save(NewAssignmentBuildingEntity);
+//                }
+//            }
+//
+//            for ( Long id :uncheckedList ){
+//                UserEntity userEntity = this.userService.getUserById(id);
+//                if ( staffAssignments.contains(userEntity)){
+//                    this.assignmentBuildingService.deleteAssignment(userEntity,buildingEntity);
+//                }
+//            }
+//        } else {
+//
+//            List<AssignmentBuildingEntity> assignmentBuildingEntities = this.assignmentBuildingService.getAssignmentBuildingEntity(buildingEntity);
+//            List<UserEntity> staffAssignments = new ArrayList<UserEntity>();
+//            for ( AssignmentBuildingEntity assignmentBuildingEntity : assignmentBuildingEntities ){
+//                staffAssignments.add(assignmentBuildingEntity.getUserEntity());
+//            };
+//
+//            List<Long>  AllStaff = new ArrayList<>();
+//            for ( UserEntity sf : staffs ){
+//                AllStaff.add(sf.getId());
+//            }
+//
+//            for ( Long id : AllStaff){
+//                UserEntity userEntity = this.userService.getUserById(id);
+//                if ( staffAssignments.contains(userEntity)){
+//                    this.assignmentBuildingService.deleteAssignment(userEntity,buildingEntity);
+//                }
+//            }
+//        }
+//
+//        List<AssignmentBuildingEntity> assignmentBuildingEntitiesFinal = this.assignmentBuildingService.getAssignmentBuildingEntity(buildingEntity);
+//        System.out.println("ok");
 
 
     }
 
     @DeleteMapping("/api/building/delete-{ids}")
     public void getDeleteBuilding (@PathVariable List<Long>  ids){
+        //ResponseDTO responseDTO = new ResponseDTO();
+        String message = "";
        for ( Long id :ids ){
-           this.buildingService.deleteBuilding(id);
+           message =  this.buildingService.deleteBuilding(id).getBody();
        }
+//       return responseDTO.setMessage(message);
     }
 
     @PostMapping ("/admin/building-edit")

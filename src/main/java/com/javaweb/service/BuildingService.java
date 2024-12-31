@@ -19,7 +19,7 @@ public interface BuildingService {
     BuildingEntity findById ( Long id);
 
 
-    void deleteBuilding( Long id);
+    ResponseEntity<String> deleteBuilding( Long id);
 
     ResponseEntity<String> createBuilding (BuildingDTO buildingDTO , MultipartFile file);
 

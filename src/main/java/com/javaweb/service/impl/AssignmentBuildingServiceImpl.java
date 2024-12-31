@@ -6,6 +6,7 @@ import com.javaweb.entity.UserEntity;
 import com.javaweb.repository.AssignmentBuildingRepository;
 import com.javaweb.service.AssignmentBuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,15 +29,46 @@ public class AssignmentBuildingServiceImpl implements AssignmentBuildingService 
     }
 
     @Override
-    public AssignmentBuildingEntity save(AssignmentBuildingEntity assignmentBuildingEntity) {
-        this.assignmentBuildingRepository.save(assignmentBuildingEntity);
+    @Transactional
+    public ResponseEntity<String>  handleSaveAssignmentBuilding(AssignmentBuildingEntity assignmentBuildingEntity) {
+        try {
+            this.assignmentBuildingRepository.save(assignmentBuildingEntity);
+            return  ResponseEntity.ok().body("Tạo mới thành công Assignment Building!!");
+        }catch (RuntimeException e){
+            System.out.println("--ER : Lỗi tạo mới   Assignment Building : " + assignmentBuildingEntity.getBuildingEntity().getId()+e.getMessage());
+            return  ResponseEntity.badRequest().body("Lỗi tạo mới AssignmentBuilding");
+        }
 
-        return null;
+
+
     }
 
     @Override
     @Transactional
-    public void deleteAssignment(UserEntity userEntity, BuildingEntity buildingEntity) {
-        this.assignmentBuildingRepository.deleteAssignmentBuildingEntityByUserEntityAndBuildingEntity(userEntity,buildingEntity);
+    public ResponseEntity<String> deleteAssignment(UserEntity userEntity, BuildingEntity buildingEntity) {
+//        try {
+//            this.assignmentBuildingRepository.deleteAssignmentBuildingEntityByUserEntityAndBuildingEntity(userEntity,buildingEntity);
+//            return ResponseEntity.ok().body("Xóa thành công Assignment trong Building !!!");
+//        }catch (RuntimeException e)
+//        {
+//            System.out.println("--ER : Lỗi không xóa được assignment building");
+//            return ResponseEntity.badRequest().body("Lỗi không xóa được assignment trong building");
+//        }
+    return null;
+
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<String> deleteAssignmentBuilding(Long id) {
+        try {
+            this.assignmentBuildingRepository.deleteAssignmentBuildingEntityByBuildingEntity_Id(id);
+            return ResponseEntity.ok().body("Xóa thành công Assignment trong Building !!!");
+        }catch (RuntimeException e)
+        {
+            System.out.println("--ER : Lỗi không xóa được assignment building");
+            return ResponseEntity.badRequest().body("Lỗi không xóa được assignment trong building");
+        }
+
     }
 }

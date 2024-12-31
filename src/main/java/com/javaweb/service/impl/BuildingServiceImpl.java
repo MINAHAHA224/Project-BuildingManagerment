@@ -77,8 +77,15 @@ public class BuildingServiceImpl implements BuildingService {
 
     @Override
     @Transactional
-    public void deleteBuilding(Long id) {
-        this.buildingRepository.deleteById(id);
+    public ResponseEntity<String> deleteBuilding(Long id) {
+        try {
+            this.buildingRepository.deleteById(id);
+            return ResponseEntity.ok().body("Xóa thành công building!!!");
+        } catch (RuntimeException e) {
+            System.out.println("--ER: Lỗi không xóa được building " + e.getMessage());
+            return ResponseEntity.badRequest().body("Lỗi không xóa được Building!!!");
+        }
+
     }
 
     @Override
