@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.jws.WebParam;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +91,7 @@ public class CustomerController {
 
 
     @GetMapping("/admin/customer-edit-{id}")
-    public ModelAndView getCustomerCreatePage (@ModelAttribute CustomerDTO customerDTO,@PathVariable Long id ){
+    public ModelAndView getCustomerCreatePage (@PathVariable Long id ){
         ModelAndView mav = new ModelAndView("admin/customer/edit");
         CustomerEntity customerEntity = this.customerService.getCustomerById(id);
         CustomerDTO newCustomerDTO = this.customerConverter.toCustomerDTO(customerEntity);

@@ -50,8 +50,8 @@ public class AssignmentCustomerRepositoryImpl implements AssignmentCustomerRepos
 
             AssignmentCustomerEntity assignmentCustomerEntity = new AssignmentCustomerEntity();
             assignmentCustomerEntity.setId(id);
-            assignmentCustomerEntity.setUserEntity(userEntity);
-            assignmentCustomerEntity.setCustomerEntity(customer);
+            assignmentCustomerEntity.setUser(userEntity);
+            assignmentCustomerEntity.setCustomer(customer);
             assignmentCustomerEntities.add(assignmentCustomerEntity);
 
         }

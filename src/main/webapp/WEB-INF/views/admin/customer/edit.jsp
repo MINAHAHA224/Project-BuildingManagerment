@@ -46,14 +46,23 @@
 
             <!--Begin form-->
             <div class="row " style="font-family: 'Times New Roman', Times, serif;">
-                <form:form modelAttribute="ModelCustomerDTO"  id="form-edit" method="GET" >
+                <form:form modelAttribute="ModelCustomerDTO"  action="/admin/customer-edit"  id="form-edit" method="POST" >
                     <form class="form-horizontal" role="form" style="margin-bottom: 40px;">
                         <form:input type="hidden" id="customerID" path="id"/>
                         <div class="col-xs-12">
+                            <c:if test="${not empty errorSQL}">
+                                <div class="alert alert-danger">${errorSQL}</div>
+                            </c:if>
                             <div class=" row form-group ">
                                 <label class="col-sm-3">Tên khách hàng</label>
                                 <div class="col-sm-9 ">
-                                    <form:input  type="text" class="form-control" id="name" path="name"/>
+                                    <c:set var="errorName">
+                                        <form:errors path="name"
+                                            cssClass="text-danger"
+                                        />
+                                    </c:set>
+                                    <form:input  type="text" class="form-control" style="${not empty errorName ? 'border: 1px solid red;' : ''}" id="name" path="name"/>
+                                    ${errorName}
                                 </div>
 
                             </div>
@@ -64,7 +73,13 @@
                             <div class=" row form-group ">
                                 <label class="col-sm-3">Số điện thoại</label>
                                 <div class="col-sm-9 ">
-                                    <form:input type="text" class="form-control" id="customerPhone" path="customerPhone"/>
+                                    <c:set var="errorPhone">
+                                        <form:errors path="customerPhone"
+                                                     cssClass="text-danger"
+                                        />
+                                    </c:set>
+                                    <form:input type="text" class="form-control" style="${not empty errorPhone ? 'border: 1px solid red;' : ''}" id="customerPhone" path="customerPhone"/>
+                                    ${errorPhone}
                                 </div>
 
                             </div>
@@ -75,7 +90,15 @@
                             <div class=" row form-group ">
                                 <label class="col-sm-3">Email</label>
                                 <div class="col-sm-9 ">
-                                    <form:input type="text" id="email" path="email" class="form-control"/>
+                                    <c:set var="errorEmail">
+                                        <form:errors path="email"
+                                                     cssClass="text-danger"
+                                        />
+                                    </c:set>
+                                    <form:input type="text" id="email"
+                                                style="${not empty errorEmail ? 'border: 1px solid red;' : ''}"
+                                                path="email" class="form-control"/>
+                                    ${errorEmail}
                                 </div>
 
                             </div>
@@ -95,7 +118,15 @@
                             <div class=" row form-group ">
                                 <label class="col-sm-3">Nhu cầu</label>
                                 <div class="col-sm-9 ">
-                                    <form:input type="text" id="demand" path="demand" class="form-control"/>
+                                    <c:set var="errorDemand">
+                                        <form:errors path="demand"
+                                                     cssClass="text-danger"
+                                        />
+                                    </c:set>
+                                    <form:input type="text" id="demand"
+                                                style="${not empty errorDemand ? 'border: 1px solid red;' : ''}"
+                                                path="demand" class="form-control"/>
+                                    ${errorDemand}
                                 </div>
 
                             </div>
@@ -105,8 +136,16 @@
                             <div class=" row form-group ">
                                 <label class="col-sm-3">Tình trạng</label>
                                 <div class="col-sm-9 ">
-                                    <form:input type="text" id="status" path="status"
+                                    <c:set var="errorStatus">
+                                        <form:errors path="status"
+                                                     cssClass="text-danger"
+                                        />
+                                    </c:set>
+                                    <form:input type="text" id="status"
+                                                style="${not empty errorStatus ? 'border: 1px solid red;' : ''}"
+                                                path="status"
                                                 class="form-control"/>
+                                        ${errorDemand}
                                 </div>
 
                             </div>
@@ -120,11 +159,11 @@
                                 <div class="col-sm-9 pull-right">
                                     <c:choose>
                                         <c:when test="${ModelCustomerDTO.id == null}">
-                                            <button class="btn btn-primary" id="btnAddBuilding" onclick="btnCreate()">Thêm khách hàng</button>
+                                            <button class="btn btn-primary" id="btnAddBuilding" type="submit" >Thêm khách hàng</button>
                                             <button class="btn btn-primary" id="btnCancel">Hủy thao tác</button>
                                         </c:when>
                                         <c:when test="${ModelCustomerDTO.id != null}">
-                                            <button class="btn btn-info" id="btnAddBuilding" onclick="btnUpdate()">Cập nhật khách hàng</button>
+                                            <button class="btn btn-info" id="btnAddBuilding" type="submit" >Cập nhật khách hàng</button>
                                             <button class="btn btn-info" id="btnCancel">Hủy thao tác</button>
                                         </c:when>
 
@@ -425,53 +464,53 @@
 
     })
 
-    function btnCreate (){
-        var data = {};
-        var formData = $('#form-edit').serializeArray();
-        $.each(formData , function (index ,item){
-            data[ "" + item.name + ""] = item.value ;
-        })
-
-        $.ajax({
-            type : "PUT",
-            url : "http://localhost:8081/api/customer/create",
-            data : JSON.stringify(data),
-            contentType : "application/JSON",
-            dataType : "JSON",
-            success(e){
-                window.location.href ="/admin/customer-list";
-            },
-            error(e){
-                console.log("error")
-            }
-        })
-
-    }
-    function btnUpdate(){
-        e
-        var data = {};
-        var formData = $('#form-edit').serializeArray();
-        $.each(formData , function (index ,item){
-            data[ "" + item.name + ""] = item.value ;
-        })
-        window.location.href ="/admin/customer-list";
-        $.ajax({
-            type : "PUT",
-            url : "http://localhost:8081/api/customer/update",
-            data : JSON.stringify(data),
-            contentType : "application/JSON",
-            dataType : "JSON",
-            success(e){
-                console.log("success")
-            },
-            error(e){
-                console.log("error")
-            }
-        })
-
-
-
-    }
+    // function btnCreate (){
+    //     var data = {};
+    //     var formData = $('#form-edit').serializeArray();
+    //     $.each(formData , function (index ,item){
+    //         data[ "" + item.name + ""] = item.value ;
+    //     })
+    //
+    //     $.ajax({
+    //         type : "PUT",
+    //         url : "http://localhost:8081/api/customer/create",
+    //         data : JSON.stringify(data),
+    //         contentType : "application/JSON",
+    //         dataType : "JSON",
+    //         success(e){
+    //             window.location.href ="/admin/customer-list";
+    //         },
+    //         error(e){
+    //             console.log("error")
+    //         }
+    //     })
+    //
+    // }
+    // function btnUpdate(){
+    //
+    //     var data = {};
+    //     var formData = $('#form-edit').serializeArray();
+    //     $.each(formData , function (index ,item){
+    //         data[ "" + item.name + ""] = item.value ;
+    //     })
+    //     window.location.href ="/admin/customer-list";
+    //     $.ajax({
+    //         type : "PUT",
+    //         url : "http://localhost:8081/api/customer/update",
+    //         data : JSON.stringify(data),
+    //         contentType : "application/JSON",
+    //         dataType : "JSON",
+    //         success(e){
+    //             console.log("success")
+    //         },
+    //         error(e){
+    //             console.log("error")
+    //         }
+    //     })
+    //
+    //
+    //
+    // }
 
 </script>
 </body>

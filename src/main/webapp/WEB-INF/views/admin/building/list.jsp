@@ -274,7 +274,7 @@
             </div>
             <!--/widget-->
 
-            <!--Table widget-->
+            <!--Table widget 11111111111-->
             <div class="row"
                  style="padding-top: 40px; padding-bottom: 20px; font-family: 'Times New Roman', Times, serif; font-size: 14px;">
                 <div class="col-xs-12">
@@ -464,6 +464,196 @@
 
             </div>
             <!--/Table widget-->
+        <!--Table widget 2222222-->
+        <div class="row"
+             style="padding-top: 40px; padding-bottom: 20px; font-family: 'Times New Roman', Times, serif; font-size: 14px;">
+            <div class="col-xs-12">
+                <table id="simple-table" class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th class="center">
+                            <label class="pos-rel">
+                                <input type="checkbox" class="ace">
+                                <span class="lbl"></span>
+                            </label>
+                        </th>
+                        <th>Tên tòa nhà</th>
+                        <th>Địa chỉ</th>
+
+                        <th>Số tầng hầm</th>
+
+                        <th>
+
+                            Tên quản lí
+                        </th>
+                        <th>Số điện thoại</th>
+                        <th>DT sàn</th>
+                        <th>DT Trống</th>
+                        <th>DT Thuê</th>
+                        <th>Giá Thuê</th>
+                        <th>Phí dịch vụ</th>
+                        <th>Phí môi giới</th>
+                        <th>Thao tác</th>
+
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <c:forEach var="buildingList" items="${buildingLists}">
+                        <tr>
+
+                            <td class="center">
+                                <label class="pos-rel">
+                                    <input type="checkbox" value=" ${buildingList.id}" class="ace">
+                                    <span class="lbl"></span>
+                                </label>
+                            </td>
+
+                            <td>
+                                    ${buildingList.name}
+                            </td>
+                            <td>${buildingList.address}</td>
+                            <td >${buildingList.numberOfBasement}</td>
+                            <td>${buildingList.managerName}</td>
+
+                            <td >
+                                    ${buildingList.managerPhone}
+                            </td>
+                            <td>${buildingList.floorArea}</td>
+                            <td>${buildingList.emptyArea}</td>
+                            <td>${buildingList.rentArea}</td>
+                            <td>${buildingList.rentPrice}</td>
+                            <td>${buildingList.serviceFee}</td>
+                            <td>${buildingList.brokerageFee}</td>
+
+                            <td>
+
+                                <div class="hidden-sm hidden-xs btn-group">
+                                    <security:authorize access="hasRole('MANAGER')">
+
+                                            <a href="/api/building/${buildingList.id}/staffs"   title="Sửa tòa nhà" class="btn btn-xs btn-info">
+                                                <i class="ace-icon glyphicon glyphicon-list"></i>
+                                            </a>
+
+
+                                    </security:authorize>
+                                    <a href="/admin/building-edit-${buildingList.id}"   title="Sửa tòa nhà" class="btn btn-xs btn-info">
+                                        <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                    </a>
+                                    <security:authorize access="hasRole('MANAGER')">
+                                        <button title="Xóa tòa nhà" onclick="btnDeleteOnly(${buildingList.id})" class="btn btn-xs btn-danger">
+                                            <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                        </button>
+                                    </security:authorize>
+
+
+                                </div>
+
+
+                                <div class="hidden-md hidden-lg">
+                                    <div class="inline pos-rel">
+                                        <button class="btn btn-minier btn-primary dropdown-toggle"
+                                                data-toggle="dropdown" data-position="auto">
+                                            <i class="ace-icon fa fa-cog icon-only bigger-110"></i>
+                                        </button>
+
+                                        <ul
+                                                class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+                                            <li>
+                                                <a href="#" class="tooltip-info" data-rel="tooltip" title=""
+                                                   data-original-title="View">
+																<span class="blue">
+																	<i
+                                                                            class="ace-icon fa fa-search-plus bigger-120"></i>
+																</span>
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="#" class="tooltip-success" data-rel="tooltip"
+                                                   title="" data-original-title="Edit">
+																<span class="green">
+																	<i
+                                                                            class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+																</span>
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="#" class="tooltip-error" data-rel="tooltip"
+                                                   title="" data-original-title="Delete">
+																<span class="red">
+																	<i class="ace-icon fa fa-trash-o bigger-120"></i>
+																</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+
+
+
+
+                        </tr>
+                    </c:forEach>
+
+
+                    </tbody>
+                </table>
+
+
+            </div><!-- /.span -->
+            <div class="col-xs-12">
+                <c:if test="${totalPages == 0}">
+                    <h4 class="center">không có dữ liệu</h4>
+                </c:if>
+                <c:if test="${totalPages != 0}">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <c:if test="${currentPage == 1}">
+                                <li class="disabled page-item">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </li>
+                            </c:if>
+                            <c:if test="${currentPage != 1}">
+                                <li class="page-item">
+                                    <a
+                                            href="/admin/building-list?page=${currentPage - 1}"
+                                            aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            </c:if>
+                            <c:forEach begin="0" end="${totalPages - 1}" varStatus="loop">
+                                <li class="page-item">
+                                    <a class="${ currentPage eq (loop.index +1) ? 'active page-link ' : 'page-link'}"
+                                       href="/admin/building-list?page=${loop.index +1}">${loop.index +1}
+                                    </a>
+                                </li>
+                            </c:forEach>
+                            <c:if test="${currentPage != totalPages}">
+                                <li class="page-item">
+                                    <a
+                                            href="/admin/building-list?page=${currentPage + 1}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </c:if>
+                            <c:if test="${currentPage == totalPages}">
+                                <li class="disabled page-item">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </li>
+                            </c:if>
+
+                        </ul>
+                    </nav>
+                </c:if>
+
+            </div>
+
+        </div>
+        <!--/Table widget-->
 
             <!-- /.main-content -->
 

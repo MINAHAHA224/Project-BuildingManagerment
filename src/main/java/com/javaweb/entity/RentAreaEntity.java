@@ -1,26 +1,25 @@
 package com.javaweb.entity;
 
+
 import lombok.*;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@AllArgsConstructor
 @ToString
-@Table(name = "assignmentbuilding")
-public class AssignmentBuildingEntity extends  BaseEntity implements Serializable {
+@Entity
+@Table( name = "rentarea")
+public class RentAreaEntity extends BaseEntity {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
-    private Long id;
+    private  Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "staffid")
-    private UserEntity user;
+    @Column(name = "value")
+    private  Long value;
 
     @ManyToOne
     @JoinColumn(name = "buildingid")

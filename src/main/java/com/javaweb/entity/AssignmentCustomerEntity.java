@@ -1,44 +1,30 @@
 package com.javaweb.entity;
 
 
-import javax.persistence.*;
+import lombok.*;
 
+import javax.persistence.*;
+import java.io.Serializable;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
+@ToString
 @Table(name = "assignmentcustomer")
-public class AssignmentCustomerEntity {
+public class AssignmentCustomerEntity extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "staffid")
-    private  UserEntity userEntity;
+    private  UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "customerid")
-    private CustomerEntity customerEntity;
+    private CustomerEntity customer;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public UserEntity getUserEntity() {
-        return userEntity;
-    }
-
-    public void setUserEntity(UserEntity userEntity) {
-        this.userEntity = userEntity;
-    }
-
-    public CustomerEntity getCustomerEntity() {
-        return customerEntity;
-    }
-
-    public void setCustomerEntity(CustomerEntity customerEntity) {
-        this.customerEntity = customerEntity;
-    }
 }

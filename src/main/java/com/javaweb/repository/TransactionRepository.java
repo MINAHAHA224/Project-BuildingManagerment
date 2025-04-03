@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<TransactionEntity , Long> {
 
-    List<TransactionEntity> getTransactionEntitiesByCodeAndCustomerEntity (String code , CustomerEntity customerEntity);
+    List<TransactionEntity> getTransactionEntitiesByCodeAndCustomer (String code , CustomerEntity customerEntity);
 
 
 }

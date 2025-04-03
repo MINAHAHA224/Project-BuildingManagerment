@@ -1,7 +1,14 @@
 package com.javaweb.entity;
 
+import lombok.*;
+
 import javax.persistence.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 @Entity
 @Table(name = "transaction")
 public class TransactionEntity extends BaseEntity {
@@ -12,42 +19,17 @@ public class TransactionEntity extends BaseEntity {
     @Column(name = "code")
     private String code;
 
-    @Column(name = "note")
+    @Column(name = "name")
     private  String note;
 
     @ManyToOne
     @JoinColumn(name = "customerid")
-    private  CustomerEntity customerEntity;
+    private  CustomerEntity customer;
 
-    public Long getId() {
-        return id;
-    }
+    @ManyToOne
+    @JoinColumn(name = "type")
+    private TransactionTypeEntity transactionType;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
-    public String getCode() {
-        return code;
-    }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public CustomerEntity getCustomerEntity() {
-        return customerEntity;
-    }
-
-    public void setCustomerEntity(CustomerEntity customerEntity) {
-        this.customerEntity = customerEntity;
-    }
 }

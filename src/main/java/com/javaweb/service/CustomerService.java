@@ -7,6 +7,7 @@ import com.javaweb.model.dto.CustomerDTO;
 import com.javaweb.model.response.CustomerSearchResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -17,12 +18,12 @@ public interface CustomerService {
 
     CustomerEntity getCustomerById (Long id);
 
-    void handleSaveCustomer (CustomerDTO customerDTO);
+    ResponseEntity<String> handleSaveCustomer (CustomerDTO customerDTO);
 
-    @Transactional
-    void handleUpdateCustomer ( CustomerDTO customerDTO);
 
-    void handleDeleteCustomer ( List<Long> ids );
+    ResponseEntity<String> handleUpdateCustomer ( CustomerDTO customerDTO);
+
+    ResponseEntity<String> handleDeleteCustomer ( List<Long> ids );
 
 
 }

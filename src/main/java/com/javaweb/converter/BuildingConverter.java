@@ -2,7 +2,7 @@ package com.javaweb.converter;
 
 import com.javaweb.entity.BuildingEntity;
 import com.javaweb.model.dto.BuildingDTO;
-import com.javaweb.repository.RentareaRepository;
+import com.javaweb.repository.RentAreaRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ public class BuildingConverter {
     private ModelMapper modelMapper;
 
     @Autowired
-    private RentareaRepository rentareaRepository;
+    private RentAreaRepository rentareaRepository;
 
     public BuildingDTO toBuildingDTO (BuildingEntity buildingEntity){
         BuildingDTO buildingDTO = new BuildingDTO();

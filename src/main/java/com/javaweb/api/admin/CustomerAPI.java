@@ -2,7 +2,9 @@ package com.javaweb.api.admin;
 
 import com.javaweb.entity.AssignmentCustomerEntity;
 import com.javaweb.entity.CustomerEntity;
+import com.javaweb.entity.TransactionEntity;
 import com.javaweb.entity.UserEntity;
+import com.javaweb.enums.AssignCustomerType;
 import com.javaweb.model.dto.AssignmentCustomerDTO;
 import com.javaweb.model.dto.CustomerDTO;
 import com.javaweb.model.dto.TransactionDTO;
@@ -14,10 +16,16 @@ import com.javaweb.service.CustomerService;
 import com.javaweb.service.TransactionService;
 import com.javaweb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class CustomerAPI {
@@ -43,7 +51,7 @@ public class CustomerAPI {
         List<AssignmentCustomerEntity> staffAssignmentCustomers = this.assignmentCustomerService.getStaffAssignmentCustomers(customerEntity);
         List<UserEntity> staffs = new ArrayList<>();
         for ( AssignmentCustomerEntity satffAssignmentCustomer : staffAssignmentCustomers ){
-            staffs.add(satffAssignmentCustomer.getUserEntity());
+            staffs.add(satffAssignmentCustomer.getUser());
         }
 
         List<StaffResponseDTO> staffResponseDTOS = new ArrayList<>();
@@ -71,18 +79,25 @@ public class CustomerAPI {
         List<UserEntity> allStaffs = this.userService.getStaffModels(1 , "STAFF");
         // logic code moi
         List<AssignmentCustomerEntity> staffAssignmentCustomers = this.assignmentCustomerService.getStaffAssignmentCustomers(customerEntity);
-        for ( AssignmentCustomerEntity staffAssignmentCustomer : staffAssignmentCustomers ){
-            this.assignmentCustomerService.handleDelete( staffAssignmentCustomer.getUserEntity() , customerEntity);
-        };
-        if ( !assignmentCustomerDTO.getStaffs().isEmpty()){
-            for ( Long idStaff : assignmentCustomerDTO.getStaffs() ){
-                AssignmentCustomerEntity assignmentCustomerEntity = new AssignmentCustomerEntity();
-                UserEntity userEntity = this.userService.getUserById(idStaff);
-                assignmentCustomerEntity.setUserEntity(userEntity);
-                assignmentCustomerEntity.setCustomerEntity(customerEntity);
-                this.assignmentCustomerService.handleSave(assignmentCustomerEntity);
-            };
-        };
+        // handle Delete  Assignment Customer
+        ResponseEntity<String> handleDeleteAssignmentCustomer =  this.assignmentCustomerService.handleDeleteAssignmentCustomer( customerEntity.getId());
+        if (handleDeleteAssignmentCustomer.getStatusCodeValue() == 200 ){
+
+                // handleSave
+                for ( Long idStaff : assignmentCustomerDTO.getStaffs() ){
+                    AssignmentCustomerEntity assignmentCustomerEntity = new AssignmentCustomerEntity();
+                    UserEntity userEntity = this.userService.getUserById(idStaff);
+                    assignmentCustomerEntity.setUser(userEntity);
+                    assignmentCustomerEntity.setCustomer(customerEntity);
+                  ResponseEntity<String> handleSaveAssignmentCustomer =   this.assignmentCustomerService.handleSaveAssignmentCustomer(assignmentCustomerEntity);
+                  if ( handleSaveAssignmentCustomer.getStatusCodeValue() != 200 ){
+                      System.out.println("Lỗi không save đợc Assignment Customer  có staff id " + idStaff);
+                      break;
+                  }
+                };
+
+        }
+
     // logic code này chạy chậm khi dữ liệu nhân viên nhiều
 //        List<AssignmentCustomerEntity> staffAssignmentCustomers = this.assignmentCustomerService.getStaffAssignmentCustomers(customerEntity);
 //        List<UserEntity> staffs = new ArrayList<>();
@@ -139,35 +154,85 @@ public class CustomerAPI {
     }
 
 
-    @PutMapping("/api/customer/create")
-    public  void getCreateCustomer (@RequestBody CustomerDTO customerDTO){
+    @PostMapping("/admin/customer-edit")
+    public  ModelAndView getCreateCustomer (@Valid  @ModelAttribute ("ModelCustomerDTO") CustomerDTO customerDTO , BindingResult bindingResult){
+
+
+        // check data
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+        for ( FieldError error : fieldErrors ){
+            System.out.println(">>>>>" + error.getField() + "-" + error.getDefaultMessage());
+        }
 
         if (SecurityUtils.getPrincipal().getId() != null) {
             customerDTO.setManagementStaff(SecurityUtils.getPrincipal().getFullName());
 
         }
+        ModelAndView mav = new ModelAndView("admin/customer/edit");
+        mav.addObject( "ModelCustomerDTO" , customerDTO);
+        if ( customerDTO.getId() == null){
 
-        this.customerService.handleSaveCustomer(customerDTO);
+            if (bindingResult.hasErrors() ){
+                return mav;
+            }
+            ResponseEntity<String> handleSaveCustomer = this.customerService.handleSaveCustomer(customerDTO);
+            if ( handleSaveCustomer.getStatusCodeValue() == 200){
+               return new ModelAndView("redirect:/admin/customer-list");
+            }else {
+                mav.addObject("errorSQL" , handleSaveCustomer.getBody());
+                return mav;
+            }
+        }else {
 
-    }
 
-    @PutMapping("/api/customer/update")
-    public  void getUpdateCustomer (@RequestBody CustomerDTO customerDTO){
 
-        if (SecurityUtils.getPrincipal().getId() != null) {
-            customerDTO.setManagementStaff(SecurityUtils.getPrincipal().getFullName());
+            CustomerEntity customerEntity = this.customerService.getCustomerById(customerDTO.getId() );
 
+            Map<String , String> AssignmentCustomerType = AssignCustomerType.type();
+            List<TransactionEntity> listTransactionCodeCSKH = this.transactionService.getTransactionByCodeAndCustomer("CSKH" , customerEntity);
+            List<TransactionEntity> listTransactionCodeDDX = this.transactionService.getTransactionByCodeAndCustomer("DDX", customerEntity);
+            mav.addObject("AssignmentCustomerType" ,AssignmentCustomerType );
+            mav.addObject("ListCSKHs" ,listTransactionCodeCSKH );
+            mav.addObject("ListDDXs" ,listTransactionCodeDDX );
+            if (bindingResult.hasErrors() ){
+                return mav;
+            }
+
+            ResponseEntity<String> handleUpdateCustomer =   this.customerService.handleUpdateCustomer(customerDTO);
+            if ( handleUpdateCustomer.getStatusCodeValue() == 200){
+                mav.addObject("errorSQL" , handleUpdateCustomer.getBody());
+                return mav;
+            }else {
+                mav.addObject("errorSQL" , handleUpdateCustomer.getBody());
+                return mav;
+            }
         }
 
-        this.customerService.handleUpdateCustomer(customerDTO);
+
 
     }
+
+//    @PutMapping("/api/customer/update")
+//    public  void getUpdateCustomer (@RequestBody CustomerDTO customerDTO){
+//
+//        if (SecurityUtils.getPrincipal().getId() != null) {
+//            customerDTO.setManagementStaff(SecurityUtils.getPrincipal().getFullName());
+//
+//        }
+//
+//
+//
+//    }
 
 
     @DeleteMapping("/api/customer/{customerId}")
     public void getDeleteCustomer (@PathVariable List<Long> customerId){
 
-        this.customerService.handleDeleteCustomer(customerId);
+      ResponseEntity<String>  handleDeleteCustomer =  this.customerService.handleDeleteCustomer(customerId);
+      if (handleDeleteCustomer.getStatusCodeValue()  != 200 ){
+          // handle
+      }
+
     }
 
     @PutMapping ("/api/customer/transaction")

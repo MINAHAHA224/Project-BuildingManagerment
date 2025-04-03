@@ -1,7 +1,9 @@
 package com.javaweb.model.dto;
 
-import java.util.Date;
+import com.javaweb.service.validator.customer.CustomerChecked;
 
+import java.util.Date;
+@CustomerChecked
 public class CustomerDTO extends  AbstractDTO {
 
     private  Long id;

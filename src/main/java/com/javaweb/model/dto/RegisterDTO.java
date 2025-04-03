@@ -1,7 +1,7 @@
 package com.javaweb.model.dto;
 
 
-import com.javaweb.service.validator.RegisterChecked;
+import com.javaweb.service.validator.register.RegisterChecked;
 
 import javax.validation.constraints.NotNull;
 

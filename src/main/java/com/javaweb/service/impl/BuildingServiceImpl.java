@@ -1,15 +1,14 @@
 package com.javaweb.service.impl;
 
 import com.javaweb.builder.BuildingSearchBuilder;
-import com.javaweb.constant.SystemConstant;
 import com.javaweb.converter.BuildingEntityToBuildingSearchResponse;
 import com.javaweb.entity.BuildingEntity;
-import com.javaweb.entity.RentareaEntity;
+import com.javaweb.entity.RentAreaEntity;
 import com.javaweb.exception.MyException;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.response.BuildingSearchResponse;
 import com.javaweb.repository.BuildingRepository;
-import com.javaweb.repository.RentareaRepository;
+import com.javaweb.repository.RentAreaRepository;
 import com.javaweb.service.BuildingService;
 import com.javaweb.utils.HandleUploadFile;
 import org.modelmapper.ModelMapper;
@@ -23,10 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletContext;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +44,7 @@ public class BuildingServiceImpl implements BuildingService {
    private ServletContext servletContext;
 
     @Autowired
-    private RentareaRepository rentareaRepository;
+    private RentAreaRepository rentareaRepository;
 
     @Autowired
     private HandleUploadFile handleUploadFile;
@@ -105,11 +100,11 @@ public class BuildingServiceImpl implements BuildingService {
                 List<String> rentAreaValues = Arrays.asList(buildingDTO.getRentArea().split(","));
                 for ( String rentAreaValue : rentAreaValues ){
                     try {
-                        RentareaEntity rentareaEntity = new RentareaEntity();
+                        RentAreaEntity rentareaEntity = new RentAreaEntity();
                         rentareaEntity.setValue(Long.valueOf(rentAreaValue));
-                        rentareaEntity.setBuildingId(building);
+                        rentareaEntity.setBuilding(building);
                         this.rentareaRepository.save(rentareaEntity);
-                    } catch (MyException e) {
+                    } catch (RuntimeException e) {
                         System.out.println("--ER :Lỗi khi lưu giá trị thuê " + e.getMessage());
                         throw new MyException("Lỗi khi lưu giá trị thuê: " + e.getMessage());
                     }
@@ -135,11 +130,11 @@ public class BuildingServiceImpl implements BuildingService {
             this.rentareaRepository.handleDeleteRentarea(buildingDTO.getId());
             // handle save rentAreaValue
             List<String> rentAreaValues = Arrays.asList(buildingDTO.getRentArea().split(","));
-            List<RentareaEntity> rentareaEntities = new ArrayList<>();
+            List<RentAreaEntity> rentareaEntities = new ArrayList<>();
             for ( String rentAreaValue : rentAreaValues ){
-                RentareaEntity rentareaEntity = new RentareaEntity();
+                RentAreaEntity rentareaEntity = new RentAreaEntity();
                 rentareaEntity.setValue(Long.valueOf(rentAreaValue));
-                rentareaEntity.setBuildingId(CurrentBuildingEntity);
+                rentareaEntity.setBuilding(CurrentBuildingEntity);
                 rentareaEntities.add(rentareaEntity);
                 this.rentareaRepository.save(rentareaEntity);
             }

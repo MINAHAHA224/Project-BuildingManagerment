@@ -26,7 +26,7 @@ public class TransactionServiceImpl  implements TransactionService {
     private TransactionConverter transactionConverter;
     @Override
     public List<TransactionEntity> getTransactionByCodeAndCustomer(String code, CustomerEntity customerEntity) {
-        return this.transactionRepository.getTransactionEntitiesByCodeAndCustomerEntity(code,customerEntity);
+        return this.transactionRepository.getTransactionEntitiesByCodeAndCustomer(code,customerEntity);
     }
 
 
@@ -37,7 +37,7 @@ public class TransactionServiceImpl  implements TransactionService {
             TransactionEntity transactionEntity = this.transactionRepository.findById(transactionDTO.getIdTransaction()).get();
             TransactionEntity newTransaction = this.transactionConverter.toTransactionEntity(transactionDTO);
             newTransaction.setId(transactionDTO.getIdTransaction());
-            newTransaction.setCustomerEntity(customerEntity);
+            newTransaction.setCustomer(customerEntity);
             newTransaction.setCreatedBy(transactionEntity.getCreatedBy());
             newTransaction.setCreatedDate(transactionEntity.getCreatedDate());
             newTransaction.setModifiedBy(transactionDTO.getManagementStaff());
@@ -47,7 +47,7 @@ public class TransactionServiceImpl  implements TransactionService {
             CustomerEntity customerEntity = this.customerService.getCustomerById(transactionDTO.getCustomerTransID());
             TransactionEntity transactionEntity = new TransactionEntity();
             transactionEntity.setCode(transactionDTO.getCode());
-            transactionEntity.setCustomerEntity(customerEntity);
+            transactionEntity.setCustomer(customerEntity);
             transactionEntity.setNote(transactionDTO.getNote());
             transactionEntity.setCreatedBy(transactionDTO.getManagementStaff());
             this.transactionRepository.save(transactionEntity);

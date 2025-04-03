@@ -35,7 +35,7 @@ public class AssignmentBuildingServiceImpl implements AssignmentBuildingService 
             this.assignmentBuildingRepository.save(assignmentBuildingEntity);
             return  ResponseEntity.ok().body("Tạo mới thành công Assignment Building!!");
         }catch (RuntimeException e){
-            System.out.println("--ER : Lỗi tạo mới   Assignment Building : " + assignmentBuildingEntity.getBuildingEntity().getId()+e.getMessage());
+            System.out.println("--ER : Lỗi tạo mới   Assignment Building : " + assignmentBuildingEntity.getBuilding().getId()+e.getMessage());
             return  ResponseEntity.badRequest().body("Lỗi tạo mới AssignmentBuilding");
         }
 
@@ -62,7 +62,7 @@ public class AssignmentBuildingServiceImpl implements AssignmentBuildingService 
     @Transactional
     public ResponseEntity<String> deleteAssignmentBuilding(Long id) {
         try {
-            this.assignmentBuildingRepository.deleteAssignmentBuildingEntityByBuildingEntity_Id(id);
+            this.assignmentBuildingRepository.deleteAssignmentBuildingEntityByBuilding_Id(id);
             return ResponseEntity.ok().body("Xóa thành công Assignment trong Building !!!");
         }catch (RuntimeException e)
         {

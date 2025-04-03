@@ -1,7 +1,7 @@
 package com.javaweb.converter;
 
 import com.javaweb.entity.BuildingEntity;
-import com.javaweb.entity.RentareaEntity;
+import com.javaweb.entity.RentAreaEntity;
 import com.javaweb.enums.DistrictCode;
 import com.javaweb.model.response.BuildingSearchResponse;
 import org.modelmapper.ModelMapper;
@@ -20,7 +20,7 @@ public class BuildingEntityToBuildingSearchResponse {
     public BuildingSearchResponse toBuildingSearchResponse (BuildingEntity buildingEntity){
         BuildingSearchResponse buildingSearchResponse = this.modelMapper.map(buildingEntity ,BuildingSearchResponse.class );
         Map<String ,String> ans = DistrictCode.code();
-        String codeDistrict = buildingEntity.getDistrict() ;
+        String codeDistrict = buildingEntity.getDistrict().getCodeDistrict() ;
 
         String  nameDistrict = "";
         for (Map.Entry<String,String> an : ans.entrySet()){
@@ -31,7 +31,7 @@ public class BuildingEntityToBuildingSearchResponse {
 
         buildingSearchResponse.setAddress(buildingEntity.getStreet() +" " + buildingEntity.getWard()   +" "+ nameDistrict);
 
-        List<RentareaEntity> rentareaEntities = buildingEntity.getRentValue();
+        List<RentAreaEntity> rentareaEntities = buildingEntity.getRentAreaEntities();
 
         String resultNew = rentareaEntities.stream().map(it -> it.getValue().toString()).collect(Collectors.joining(","));
         buildingSearchResponse.setRentArea(resultNew);

@@ -6,33 +6,26 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "role")
-public class RoleEntity extends BaseEntity {
-
-
+@Table(name = "district")
+public class DistrictEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    
-    @Column(name="name")
-    private String name;
+    @Column(name = "code")
+    private String codeDistrict;
 
-    @Column(name="code")
-    private String code;
+    @Column(name = "name")
+    private String nameDistrict;
 
-    @OneToMany(mappedBy = "role")
-    private List<UserRoleEntity> userRoleEntities;
-
-
-
-
-
+    @OneToMany(mappedBy = "district")
+    private List<BuildingEntity> buildingEntities;
 }

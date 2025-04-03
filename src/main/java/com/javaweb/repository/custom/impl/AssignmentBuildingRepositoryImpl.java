@@ -50,8 +50,8 @@ public class AssignmentBuildingRepositoryImpl implements AssignmentBuildingRepos
             BuildingEntity buildingEntityCus = entityManager.find(BuildingEntity.class, buildingidassign);
             AssignmentBuildingEntity assignmentBuildingEntity = new AssignmentBuildingEntity();
             assignmentBuildingEntity.setId(idassign);
-            assignmentBuildingEntity.setUserEntity(userEntityCus);
-            assignmentBuildingEntity.setBuildingEntity(buildingEntityCus);
+            assignmentBuildingEntity.setUser(userEntityCus);
+            assignmentBuildingEntity.setBuilding(buildingEntityCus);
             answers.add(assignmentBuildingEntity);
         }
             return answers;
@@ -73,8 +73,8 @@ public class AssignmentBuildingRepositoryImpl implements AssignmentBuildingRepos
             BuildingEntity building = entityManager.find(BuildingEntity.class ,buildingId);
             AssignmentBuildingEntity AssignBuildingEntity = new AssignmentBuildingEntity();
             AssignBuildingEntity.setId(id);
-            AssignBuildingEntity.setUserEntity(userEntity);
-            AssignBuildingEntity.setBuildingEntity(building);
+            AssignBuildingEntity.setUser(userEntity);
+            AssignBuildingEntity.setBuilding(building);
             assignmentBuildingEntities.add(AssignBuildingEntity);
 
         }

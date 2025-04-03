@@ -55,7 +55,7 @@ public class BuildingAPI {
        List<AssignmentBuildingEntity> assignmentBuildingEntities = this.assignmentBuildingService.getAssignmentBuildingEntity(buildingEntity);
         List<UserEntity> staffAssignments = new ArrayList<UserEntity>();
         for ( AssignmentBuildingEntity assignmentBuildingEntity : assignmentBuildingEntities ){
-            staffAssignments.add(assignmentBuildingEntity.getUserEntity());
+            staffAssignments.add(assignmentBuildingEntity.getUser());
         };
 
 
@@ -81,6 +81,44 @@ public class BuildingAPI {
         return responseDTO;
     }
 
+
+    @GetMapping(value = "/api/building/{id}/staffs")
+    public ModelAndView getStaffModelAssignment (@PathVariable Long id){
+        ModelAndView mav = new ModelAndView("admin/building/assignment");
+        // tìm tòa nhà có id
+        BuildingEntity buildingEntity = this.buildingService.findById(id);
+
+        // tìm tất cả các nhân viên có role là Staff và đang hoạt động
+        List<UserEntity> staffs = this.userService.getStaffModels(1 , "STAFF");
+
+        // tìm tất cả các nhân viên HIỆN đang quản lí cái id building
+        List<AssignmentBuildingEntity> assignmentBuildingEntities = this.assignmentBuildingService.getAssignmentBuildingEntity(buildingEntity);
+        List<UserEntity> staffAssignments = new ArrayList<UserEntity>();
+        for ( AssignmentBuildingEntity assignmentBuildingEntity : assignmentBuildingEntities ){
+            staffAssignments.add(assignmentBuildingEntity.getUser());
+        };
+
+
+        List<StaffResponseDTO> staffResponseDTOS = new ArrayList<>();
+        for ( UserEntity staff : staffs ){
+            StaffResponseDTO staffResponseDTO = new StaffResponseDTO();
+            staffResponseDTO.setStaffId(staff.getId());
+            staffResponseDTO.setFullName(staff.getFullName());
+            if ( staffAssignments.contains(staff)){
+                staffResponseDTO.setChecked("checked");
+            }
+            else {
+                staffResponseDTO.setChecked("");
+            }
+            staffResponseDTOS.add(staffResponseDTO);
+        }
+
+        mav.addObject("dataStaffs" ,staffResponseDTOS );
+        mav.addObject("buildingId" ,id );
+
+        return mav;
+    }
+
     @PutMapping("/api/building/assignmentBuilding")
     public void getAssignmentBuilding (@RequestBody AssignmentBuildingDTO assignmentBuildingDTO){
 
@@ -93,8 +131,8 @@ public class BuildingAPI {
             for ( Long id  :  assignmentBuildingDTO.getStaffs()){
                 AssignmentBuildingEntity assignmentBuildingEntity = new AssignmentBuildingEntity();
                 UserEntity userEntity = this.userService.getUserById(id);
-                assignmentBuildingEntity.setUserEntity(userEntity);
-                assignmentBuildingEntity.setBuildingEntity(buildingEntity);
+                assignmentBuildingEntity.setUser(userEntity);
+                assignmentBuildingEntity.setBuilding(buildingEntity);
 
               ResponseEntity<String> handleSaveAssignmentBuilding =  this.assignmentBuildingService.handleSaveAssignmentBuilding(assignmentBuildingEntity);
               if (handleSaveAssignmentBuilding.getStatusCodeValue() != 200 ){
@@ -103,69 +141,34 @@ public class BuildingAPI {
               }
             }
         }
+    }
 
+    @PostMapping("/api/building/assignmentBuildingAssigment")
+    public void getAssignmentBuildingAssigment(@RequestParam("buildingId") String buildingId,
+                                               @RequestParam("staffIds") List<String> staffIds){
 
-//        List<UserEntity> staffs = this.userService.getStaffModels(1 , "STAFF");
-//
-//        List<Long> checkedList = new ArrayList<>();
-//        List<Long> uncheckedList = new ArrayList<>();
-//        if (!assignmentBuildingDTO.getStaffs().isEmpty()){
-//            List<Long> idStaffs = assignmentBuildingDTO.getStaffs();
-//            for (UserEntity id : staffs) {
-//                if (idStaffs.contains(id.getId())) {
-//                    checkedList.add(id.getId());
-//                } else {
-//                    uncheckedList.add(id.getId());
-//                }
-//            }
-//
-//            List<AssignmentBuildingEntity> assignmentBuildingEntities = this.assignmentBuildingService.getAssignmentBuildingEntity(buildingEntity);
-//            List<UserEntity> staffAssignments = new ArrayList<UserEntity>();
-//            for ( AssignmentBuildingEntity assignmentBuildingEntity : assignmentBuildingEntities ){
-//                staffAssignments.add(assignmentBuildingEntity.getUserEntity());
-//            };
-//
-//            for ( Long id : checkedList ){
-//                UserEntity userEntity = this.userService.getUserById(id);
-//
-//                if ( !staffAssignments.contains(userEntity)){
-//                    AssignmentBuildingEntity NewAssignmentBuildingEntity = new AssignmentBuildingEntity();
-//                    NewAssignmentBuildingEntity.setUserEntity(userEntity);
-//                    NewAssignmentBuildingEntity.setBuildingEntity(buildingEntity);
-//                    this.assignmentBuildingService.save(NewAssignmentBuildingEntity);
-//                }
-//            }
-//
-//            for ( Long id :uncheckedList ){
-//                UserEntity userEntity = this.userService.getUserById(id);
-//                if ( staffAssignments.contains(userEntity)){
-//                    this.assignmentBuildingService.deleteAssignment(userEntity,buildingEntity);
-//                }
-//            }
-//        } else {
-//
-//            List<AssignmentBuildingEntity> assignmentBuildingEntities = this.assignmentBuildingService.getAssignmentBuildingEntity(buildingEntity);
-//            List<UserEntity> staffAssignments = new ArrayList<UserEntity>();
-//            for ( AssignmentBuildingEntity assignmentBuildingEntity : assignmentBuildingEntities ){
-//                staffAssignments.add(assignmentBuildingEntity.getUserEntity());
-//            };
-//
-//            List<Long>  AllStaff = new ArrayList<>();
-//            for ( UserEntity sf : staffs ){
-//                AllStaff.add(sf.getId());
-//            }
-//
-//            for ( Long id : AllStaff){
-//                UserEntity userEntity = this.userService.getUserById(id);
-//                if ( staffAssignments.contains(userEntity)){
-//                    this.assignmentBuildingService.deleteAssignment(userEntity,buildingEntity);
-//                }
-//            }
-//        }
-//
-//        List<AssignmentBuildingEntity> assignmentBuildingEntitiesFinal = this.assignmentBuildingService.getAssignmentBuildingEntity(buildingEntity);
-//        System.out.println("ok");
+        Long buildingIdLong = Long.valueOf(buildingId);
 
+        BuildingEntity buildingEntity = this.buildingService.findById(buildingIdLong);
+
+        // handle delete Assignment building
+        ResponseEntity<String> handleDeleteAssignment = this.assignmentBuildingService.deleteAssignmentBuilding(buildingIdLong);
+        if ( handleDeleteAssignment.getStatusCodeValue() == 200){
+            // handle save Assignment building
+            for ( String staff  :  staffIds){
+                Long id = Long.valueOf(staff);
+                AssignmentBuildingEntity assignmentBuildingEntity = new AssignmentBuildingEntity();
+                UserEntity userEntity = this.userService.getUserById(id);
+                assignmentBuildingEntity.setUser(userEntity);
+                assignmentBuildingEntity.setBuilding(buildingEntity);
+
+                ResponseEntity<String> handleSaveAssignmentBuilding =  this.assignmentBuildingService.handleSaveAssignmentBuilding(assignmentBuildingEntity);
+                if (handleSaveAssignmentBuilding.getStatusCodeValue() != 200 ){
+                    System.out.println("--ER : Lỗi save assignment id staff : " + id);
+                    break;
+                }
+            }
+        }
 
     }
 
@@ -216,9 +219,7 @@ public class BuildingAPI {
             if (rsCreateBuidling.getStatusCodeValue()  == 200 ){
                 return new  ModelAndView("redirect:/admin/building-list");
             }else {
-                // hướng chỗ này là lấy cái nội dung lỗi từ thằng SQL ra rồi add vô BidingResult ,roioif qua fontend sử lý tiêp cái lỗi này
-                // không sử dụng Form:erros và cái path được mà sài thẳng ${}
-                // Hướng là truyền thêm 1 cái ModelAttribute riêng về suwr lí lỗi SQL , thì bên fontend check nếu cócaisi modedatribule đó . đến cái lỗi đó có thì show ra 1 cái div nữa
+
                 String errorSQL = rsCreateBuidling.getBody();
                 mav.addObject("errorSQL" ,errorSQL );
                 return mav;

@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface AssignmentCustomerRepository extends JpaRepository<AssignmentCustomerEntity , Long > , AssignmentCustomerRepositoryCustom {
-    void deleteAssignmentCustomerEntityByUserEntityAndCustomerEntity(UserEntity userEntity , CustomerEntity customerEntity);
 
+    void deleteAssignmentCustomerEntityByCustomer_Id ( Long id);
 
 }
